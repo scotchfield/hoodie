@@ -253,6 +253,7 @@ function ag_header() {
                  data-toggle="dropdown">Character <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="?action=profile">Profile</a></li>
+                <li><a href="?action=achievements">Achievements</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -262,6 +263,7 @@ function ag_header() {
                 <li><a href="?action=map">Current Location</a></li>
                 <li class="divider">
                 <li><a href="?action=combat">Combat</a></li>
+                <li><a href="?action=boss">Boss Battles</a></li>
                 <li><a href="?action=vendor">Vendor</a></li>
               </ul>
             </li>

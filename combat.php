@@ -1,6 +1,6 @@
 <?php
 
-function ag_combat_content() {
+function ag_combat_content( $map_obj = FALSE ) {
     global $character;
 
     if ( strcmp( 'combat', game_get_action() ) ) {
@@ -28,9 +28,11 @@ then try to engage in combat once more.</p>
         return;
     }
 
-    $obj = ag_get_map_state( $character[ 'x' ], $character[ 'y' ] );
+    if ( FALSE == $map_obj ) {
+        $map_obj = ag_get_map_state( $character[ 'x' ], $character[ 'y' ] );
+    }
 
-    $foe = ag_get_foe( $obj[ 'level' ] );
+    $foe = ag_get_foe( $map_obj[ 'level' ] );
 
     echo( '<div class="row"><h2>' .
           ag_st( 'Your foe: ' . $foe[ 'name' ] ) .
@@ -290,3 +292,23 @@ function ag_equip_gear( $args ) {
 }
 
 $custom_setting_map[ 'equip_gear' ] = 'ag_equip_gear';
+
+
+function ag_boss_content() {
+    global $character;
+
+    if ( strcmp( 'boss', game_get_action() ) ) {
+       return;
+    }
+?>
+
+<div class="row text-right">
+  <h1 class="page_section">Boss Battles</h1>
+</div>
+
+<?php
+
+}
+
+add_action( 'do_page_content', 'ag_boss_content' );
+

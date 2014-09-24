@@ -105,3 +105,21 @@ function ag_sort_stats_cmp( $a, $b ) {
     }
     return ( $a < $b ) ? -1 : 1;
 }
+
+function ag_achievements_content() {
+    global $character;
+
+    if ( strcmp( 'achievements', game_get_action() ) ) {
+       return;
+    }
+
+?>
+<div class="row text-right">
+  <h1 class="page_section">Achievements</h1>
+</div>
+<div class="row">
+
+<?php
+}
+
+add_action( 'do_page_content', 'ag_achievements_content' );
