@@ -91,7 +91,7 @@ function ag_default_action() {
         header( 'Location: ' . GAME_URL );
         exit;
     } else {
-        game_set_action( 'character' );
+        game_set_action( 'profile' );
     }
 }
 
@@ -248,9 +248,15 @@ function ag_header() {
 ?>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="?action=character">Character</a></li>
             <li class="dropdown">
-              <a href="#" class="droptown-toggle"
+              <a href="#" class="dropdown-toggle"
+                 data-toggle="dropdown">Character <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="?action=profile">Profile</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle"
                  data-toggle="dropdown">Map <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="?action=map">Current Location</a></li>

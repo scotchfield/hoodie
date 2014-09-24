@@ -1,15 +1,15 @@
 <?php
 
-function ag_character_content() {
+function ag_profile_content() {
     global $character;
 
-    if ( strcmp( 'character', game_get_action() ) ) {
+    if ( strcmp( 'profile', game_get_action() ) ) {
        return;
     }
 
 ?>
 <div class="row text-right">
-  <h1 class="page_section">Character</h1>
+  <h1 class="page_section">Profile</h1>
 </div>
 <div class="row">
   <div class="col-md-6">
@@ -94,7 +94,7 @@ function ag_character_content() {
     }/**/
 }
 
-add_action( 'do_page_content', 'ag_character_content' );
+add_action( 'do_page_content', 'ag_profile_content' );
 
 
 function ag_sort_stats_cmp( $a, $b ) {
