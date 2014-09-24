@@ -118,7 +118,47 @@ function ag_achievements_content() {
   <h1 class="page_section">Achievements</h1>
 </div>
 <div class="row">
+  <div class="col-md-6">
+    <h3>Your achievements</h3>
+<?php
+    if ( ( ! isset( $character[ 'meta' ][ game_meta_type_achievement ] ) ) ||
+         ( 0 == count(
+                    $character[ 'meta' ][ game_meta_type_achievement ] ) ) ) {
+        echo( '<h4>None yet!</h4>' );
+    } else {
+        echo( '<dl class="dl-horizontal">' );
+        $achieve_obj = get_achievements( $character[ 'id' ] );
 
+        foreach ( $achieve_obj as $achieve ) {
+            $meta = json_decode( $achieve[ 'meta_value' ], TRUE );
+            echo( '<dt>' . $meta[ 'name' ] . '</dt><dd>' .
+                  $meta[ 'text' ] . '</dd><dd>' .
+                  date( 'F j, Y, g:ia', $achieve[ 'timestamp' ] ) .
+                  '</dd>' );
+        }
+        echo( '</dl>' );
+    }
+?>
+  </div>
+  <div class="col-md-6">
+    <h3>Achievements Remaining</h3>
+    <dl class="dl-horizontal">
+<?php
+    $achieve_obj = get_all_achievements();
+
+    foreach ( $achieve_obj as $k => $achieve ) {
+        if ( isset( $character[ 'meta' ][
+                        game_meta_type_achievement ][ $k ] ) ) {
+            continue;
+        }
+        $meta = json_decode( $achieve[ 'meta_value' ], TRUE );
+        echo( '<dt>' . $meta[ 'name' ] . '</dt><dd>' .
+              $meta[ 'text' ] . '</dd>' );
+    }
+?>
+  </dl>
+  </div>
+</div>
 <?php
 }
 

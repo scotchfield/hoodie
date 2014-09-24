@@ -621,3 +621,19 @@ function ag_xy_seed( $x, $y ) {
     mt_srand( $x );
     mt_srand( mt_rand() + $y );
 }
+
+function ag_achievement_print( $args ) {
+    global $character;
+
+    if ( ! isset( $args[ 'achievement_id' ] ) ) {
+        return;
+    }
+
+    $achievement = get_achievement( $args[ 'achievement_id' ] );
+    $meta = json_decode( $achievement[ 'meta_value' ], TRUE );
+
+    echo( '<h2>Achievement: ' . $meta[ 'name' ] . '</h2>' .
+          '<h3>' . $meta[ 'text' ] . '</h3>' );
+}
+
+add_action( 'award_achievement', 'ag_achievement_print' );

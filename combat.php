@@ -1,18 +1,28 @@
 <?php
 
-function ag_combat_content( $map_obj = FALSE ) {
-    global $character;
-
+function ag_combat_content() {
     if ( strcmp( 'combat', game_get_action() ) ) {
        return;
     }
-?>
 
+?>
 <div class="row text-right">
   <h1 class="page_section">Combat</h1>
 </div>
-
 <?php
+
+    ag_do_combat();
+
+?>
+<div class="row text-center">
+  <h2>(<a href="?action=combat">Click to battle a new foe</a>)</h2>
+</div>
+<?php
+}
+
+function ag_do_combat( $map_obj = FALSE, $foe = FALSE ) {
+    global $character;
+
     $gear_obj = ag_get_gear_obj();
 
     $stamina = character_meta_float( ag_meta_type_character, AG_STAMINA );
@@ -32,7 +42,9 @@ then try to engage in combat once more.</p>
         $map_obj = ag_get_map_state( $character[ 'x' ], $character[ 'y' ] );
     }
 
-    $foe = ag_get_foe( $map_obj[ 'level' ] );
+    if ( FALSE == $foe ) {
+        $foe = ag_get_foe( $map_obj[ 'level' ] );
+    }
 
     echo( '<div class="row"><h2>' .
           ag_st( 'Your foe: ' . $foe[ 'name' ] ) .
@@ -57,26 +69,6 @@ then try to engage in combat once more.</p>
     while ( $combat ) {
 
         $round += 1;
-
-/*
-<div class="row text-center">
-  <div class="col-xs-4">
-    <h4>Round <?php echo( $round ); ?>!</h4>
-  </div>
-  <div class="col-xs-4">
-    <?php echo( $character[ 'character_name' ] ); ?><br>
-    Health: <?php echo( $health_char ); ?> /
-            <?php echo( $character[ 'health' ] ); ?>
-  </div>
-  <div class="col-xs-4">
-    <?php echo( $foe[ 'name' ] ); ?><br>
-    Health: <?php echo( $health_foe ); ?> /
-            <?php echo( $foe[ 'health' ] ); ?>
-  </div>
-</div>
-<div class="row text-center">
-  <div class="col-xs-8 col-xs-offset-4">
-*/
 
         if ( $player_turn ) {
             $attack = ag_get_attack( $character[ 'ability' ], FALSE );
@@ -104,11 +96,9 @@ then try to engage in combat once more.</p>
     if ( $health_foe <= 0 ) {
         echo( '</div></div>' );
     }
-?>
-<div class="row text-center">
 
-<?php
     if ( $health_char <= 0 ) {
+        echo( '<div class="row text-center">' );
         echo( '<h2>' . $foe[ 'name' ] . ' wins!</h2>' );
         echo( '<p class="lead">You take a huge stamina hit as you lurch ' .
               'back to a safe spot and heal.</p>' );
@@ -122,7 +112,14 @@ then try to engage in combat once more.</p>
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
             AG_LOSSES, $new_losses );
     } else if ( $health_foe <= 0 ) {
+        echo( '<div class="row text-center">' );
         echo( '<h2>You win!</h2>' );
+
+        if ( isset( $foe[ 'boss_id' ] ) ) {
+            if ( 1 == $foe[ 'boss_id' ] ) {
+                award_achievement( 1 );
+            }
+        }
 
         $new_stamina = $stamina - 1.0;
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
@@ -170,12 +167,7 @@ then try to engage in combat once more.</p>
         }
     }
 ?>
-
 </div>
-<div class="row text-center">
-  <h2>(<a href="?action=combat">Click to battle a new foe</a>)</h2>
-</div>
-
 <?php
 }
 
@@ -244,6 +236,45 @@ function ag_get_foe( $level ) {
     return $foe;
 }
 
+function ag_boss( $boss_id, $name, $health, $gold, $ability ) {
+    return array(
+        'boss_id' => $boss_id,
+        'name' => $name,
+        'health' => $health,
+        'gold' => $gold,
+        'ability' => $ability
+    );
+}
+
+function ag_get_boss( $id ) {
+    $map = array();
+    $foe = array();
+
+    if ( 1 == $id ) {
+        $map = ag_get_map_state( 5, 5 );
+        $foe = ag_boss(
+            1, 'Chester, he who is Mediocre', mt_rand( 20, 30 ),
+            mt_rand( 60, 120 ), mt_rand( 4, 6 ) );
+    } else if ( 2 == $id ) {
+        $map = ag_get_map_state( 10, 10 );
+        $foe = ag_boss(
+            2, 'Thunderface', round( pow( mt_rand( 20, 22 ), 1.5 ) ),
+            mt_rand( 120, 200 ), mt_rand( 10, 12 ) );
+    } else if ( 3 == $id ) {
+        $map = ag_get_map_state( 15, 15 );
+        $foe = ag_boss(
+            3, 'Doctor Blob', round( pow( mt_rand( 35, 39 ), 1.5 ) ),
+            mt_rand( 500, 700 ), mt_rand( 16, 19 ) );
+    } else {
+        $map = ag_get_map_state( 0, 0 );
+        $foe = ag_boss(
+            -1, 'Piotr the Hax0red', mt_rand( 200000, 300000 ), 1,
+            mt_rand( 200000, 300000 ) );
+    }
+
+    return array( 'map' => $map, 'foe' => $foe );
+}
+
 function ag_get_attack( $ability, $is_foe ) {
     global $character;
 
@@ -288,7 +319,7 @@ function ag_equip_gear( $args ) {
     update_character_meta( $character[ 'id' ], ag_meta_type_character,
         $gear_slot, character_meta( ag_meta_type_character, AG_STORED_GEAR ) );
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?action=character';
+    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?action=profile';
 }
 
 $custom_setting_map[ 'equip_gear' ] = 'ag_equip_gear';
@@ -308,6 +339,34 @@ function ag_boss_content() {
 
 <?php
 
+    $boss_id = 0;
+    if ( isset( $_GET[ 'id' ] ) ) {
+        $boss_id = intval( $_GET[ 'id' ] );
+    }
+
+    if ( $boss_id > 0 ) {
+        $boss_obj = ag_get_boss( $boss_id );
+
+        ag_do_combat( $map_obj = $boss_obj[ 'map' ],
+                      $foe = $boss_obj[ 'foe' ] );
+    } else {
+?>
+<div class="row text-center">
+  <h2>Which boss do you dare to challenge?</h2>
+  <h3><a href="?action=boss&id=1">Boss 1</a></h3>
+  <h3><a href="?action=boss&id=2">Boss 2</a></h3>
+  <h3><a href="?action=boss&id=3">Boss 3</a></h3>
+  <h3><a href="?action=boss&id=4">Boss 4</a></h3>
+  <h3><a href="?action=boss&id=5">Boss 5</a></h3>
+  <h3><a href="?action=boss&id=6">Boss 6</a></h3>
+  <h3><a href="?action=boss&id=7">Boss 7</a></h3>
+  <h3><a href="?action=boss&id=8">Boss 8</a></h3>
+  <h3><a href="?action=boss&id=9">Boss 9</a></h3>
+  <h3><a href="?action=boss&id=10">Boss 10</a></h3>
+
+</div>
+<?php
+    }
 }
 
 add_action( 'do_page_content', 'ag_boss_content' );
