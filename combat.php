@@ -118,6 +118,8 @@ then try to engage in combat once more.</p>
         if ( isset( $foe[ 'boss_id' ] ) ) {
             if ( 1 == $foe[ 'boss_id' ] ) {
                 award_achievement( 1 );
+            } else if ( 2 == $foe[ 'boss_id' ] ) {
+                award_achievement( 2 );
             }
         }
 
@@ -141,7 +143,7 @@ then try to engage in combat once more.</p>
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
             AG_XP, $new_xp );
 
-        if ( mt_rand( 1, 10 ) <= 10 ) {
+        if ( mt_rand( 1, 100 ) <= 25 ) {
             echo( '<h4>A piece of incredible loot falls to the ground!</h4>' );
 
             $gear_drop = array(
