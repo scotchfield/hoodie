@@ -245,6 +245,9 @@ function ag_header() {
 <?php
 
     if ( FALSE != $character ) {
+
+        add_heartbeat();
+
 ?>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
