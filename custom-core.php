@@ -208,8 +208,6 @@ function ag_header() {
         return;
     }
 
-    ag_unpack_character();
-
 ?><!DOCTYPE html>
 <html lang="en">
   <head>
@@ -402,9 +400,16 @@ function ag_regen_stamina() {
         ag_meta_type_character, AG_STAMINA );
 
     if ( $stamina < 100 ) {
+        $stamina_boost = 1.0;
+        if ( isset( $character[ 'stats' ][ 'Hoodie' ] ) ) {
+            $hoodie = intval( $character[ 'stats' ][ 'Hoodie' ] );
+            $hoodie = max( 0, min( 100, $hoodie ) );
+            $stamina_boost += ( $hoodie / 100.0 ) ;
+        }
+
         $stamina_seconds = time() - character_meta_int(
             ag_meta_type_character, AG_STAMINA_TIMESTAMP );
-        $stamina_gain = $stamina_seconds / 120.0;
+        $stamina_gain = $stamina_boost * ( $stamina_seconds / 120.0 );
 
         $new_stamina = min( 100, $stamina + $stamina_gain );
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
@@ -415,6 +420,7 @@ function ag_regen_stamina() {
         AG_STAMINA_TIMESTAMP, time() );
 }
 
+add_action( 'character_load', 'ag_unpack_character' );
 add_action( 'character_load', 'ag_regen_stamina' );
 
 function ag_tip_print() {
