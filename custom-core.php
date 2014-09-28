@@ -148,7 +148,9 @@ function ag_unpack_character() {
             }
 
             $character[ 'stats' ][ $stat_k ] += floatval( $stat_v );
-            $character[ 'ability' ] += floatval( $stat_v );
+            if ( 'Hoodie' != $stat_k ) {
+                $character[ 'ability' ] += floatval( $stat_v );
+            }
         }
     }
 
@@ -373,14 +375,29 @@ immediately, just like Arcadia, so that you can build hoodie games of
 your own. :)</p>
   <p>A one-time donation of at least one Canadian dollar will award you
 the prestigious Red Hoodie, with a Hoodie stat of 100. The only thing it
-does, like all hoodies, is increase the juicyness of the game. Rest assured,
-you will never find a sweeter hoodie.</p>
-  <p>And this is purely optional--this item does not affect gameplay in
-any way. It is just juice.</p>
+does, like all hoodies, is increase your stamina refresh rate, up to double
+the standard rate. Rest assured, you will never find a sweeter hoodie.</p>
+  <p>And this is purely optional--this item does not affect how powerful
+you are, how well you can defeat the bosses, your damage, your defense,
+or any other real aspect of gameplay in any way. It's the same as the
+most powerful hoodie that can drop in the game. If you're patient enough,
+then you don't even need to think about this as an option, unless you
+just want to say thanks. (If that's the case, just send me a greeting on
+Twitter, and that's more than enough!)</p>
   <p>I love you for reading this far. Go play
 <a href="http://store.steampowered.com/app/244870/">Electronic Super Joy</a>,
 then go star and fork the Arcadia project on github. Then go hug a friend,
 or pet a cat. Do something nice, and have a wonderful day!</p>
+
+</div>
+<div class="row text-center">
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="WK6GBT2TWCCSQ">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
 
 </div>
 <?php
@@ -452,7 +469,8 @@ function ag_gear_string( $item ) {
     }
 
     $rarity_obj = array(
-        4 => 'epic', 3 => 'rare', 2 => 'uncommon', 1 => 'common',
+        5 => 'legendary', 4 => 'epic', 3 => 'rare',
+        2 => 'uncommon', 1 => 'common',
     );
 
     $st = '<a class="' . $rarity_obj[ $item[ 'rarity' ] ] .
@@ -460,14 +478,21 @@ function ag_gear_string( $item ) {
           '<span class=&quot;item_name&quot;>' . $item[ 'name' ] .
           '</span><hr>';
 
-    if ( 4 == $item[ 'rarity' ] ) {
-        $st = $st . '<span class=&quot;epic&quot;>Epic Quality</span><br><span>';
+    if ( 5 == $item[ 'rarity' ] ) {
+        $st = $st . '<span class=&quot;legendary&quot;>' .
+              'Legendary Quality</span><br><span>';
+    } else if ( 4 == $item[ 'rarity' ] ) {
+        $st = $st . '<span class=&quot;epic&quot;>' .
+              'Epic Quality</span><br><span>';
     } else if ( 3 == $item[ 'rarity' ] ) {
-        $st = $st . '<span class=&quot;rare&quot;>Rare Quality</span><br><span>';
+        $st = $st . '<span class=&quot;rare&quot;>' .
+              'Rare Quality</span><br><span>';
     } else if ( 2 == $item[ 'rarity' ] ) {
-        $st = $st . '<span class=&quot;uncommon&quot;>Uncommon Quality</span><br><span>';
+        $st = $st . '<span class=&quot;uncommon&quot;>' .
+              'Uncommon Quality</span><br><span>';
     } else {
-        $st = $st . '<span class=&quot;common&quot;>Common Quality</span><br><span>';
+        $st = $st . '<span class=&quot;common&quot;>' .
+              'Common Quality</span><br><span>';
     }
 
     if ( isset( $item[ 'stats' ] ) ) {
@@ -651,3 +676,36 @@ function ag_achievement_print( $args ) {
 }
 
 add_action( 'award_achievement', 'ag_achievement_print' );
+
+
+function ag_thank_you() {
+    global $character;
+
+    if ( strcmp( 'thank_you', game_get_action() ) ) {
+       return;
+    }
+
+    if ( FALSE == $character ) {
+        return;
+    }
+
+    update_character_meta( $character[ 'id' ],
+        ag_meta_type_character, AG_HOODIE,
+        '{"name":"Epic Red Hoodie","stats":{"Hoodie":100},"rarity":"5"}' );
+?>
+<div class="row text-right">
+  <h1 class="page_section">Thank You</h1>
+</div>
+<div class="row text-center">
+  <h2>Holy smokes! Thanks!</h2>
+  <p>You've got a brand new hoodie attached to your character now. It'll
+keep you warm and cozy, while giving you a slight boost to your stamina
+recovery.</p>
+  <p>Thanks for supporting the game! Be sure to check out the
+<a href="https://github.com/scotchfield/arcadia">Arcadia project</a> on
+Github, if that's your sort of thing, and enjoy the rest of the game!</p>
+  <h3>Most of all, have fun!</h3>
+<?php
+}
+
+add_action( 'do_page_content', 'ag_thank_you' );

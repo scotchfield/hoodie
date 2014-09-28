@@ -130,6 +130,10 @@ a.epic, span.epic {
     color: #CC00CC;
 }
 
+a.legendary, span.legendary {
+    color: #FF2400;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
