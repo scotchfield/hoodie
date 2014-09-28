@@ -143,7 +143,8 @@ then try to engage in combat once more.</p>
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
             AG_XP, $new_xp );
 
-        if ( mt_rand( 1, 100 ) <= 25 ) {
+        mt_srand();
+        if ( ( isset( $foe[ 'boss_id' ] ) ) || ( mt_rand( 1, 100 ) <= 50 ) ) {
             echo( '<h4>A piece of incredible loot falls to the ground!</h4>' );
 
             $gear_drop = array(
