@@ -11,6 +11,29 @@ function ag_profile_content() {
 <div class="row text-right">
   <h1 class="page_section">Profile</h1>
 </div>
+<?php
+    if ( $character[ 'ability' ] >= 10 ) {
+        award_achievement( 100 );
+    }
+    if ( $character[ 'ability' ] >= 25 ) {
+        award_achievement( 101 );
+    }
+    if ( $character[ 'ability' ] >= 50 ) {
+        award_achievement( 102 );
+    }
+    if ( $character[ 'ability' ] >= 100 ) {
+        award_achievement( 103 );
+    }
+    if ( $character[ 'ability' ] >= 250 ) {
+        award_achievement( 104 );
+    }
+    if ( $character[ 'ability' ] >= 500 ) {
+        award_achievement( 105 );
+    }
+    if ( $character[ 'ability' ] >= 1000 ) {
+        award_achievement( 106 );
+    }
+?>
 <div class="row">
   <div class="col-md-6">
     <h2>Details</h2>
