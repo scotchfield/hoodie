@@ -371,15 +371,16 @@ success. And if I reach $136.80USD in donations, I'll ship a hoodie to
 the sweet hoodie in the first place. Oh, and I'll open source this game
 immediately, just like Arcadia, so that you can build hoodie games of
 your own. :)</p>
-  <p>A one-time donation of at least one American dollar will award you
+  <p>A one-time donation of at least one Canadian dollar will award you
 the prestigious Red Hoodie, with a Hoodie stat of 100. The only thing it
 does, like all hoodies, is increase the juicyness of the game. Rest assured,
 you will never find a sweeter hoodie.</p>
   <p>And this is purely optional--this item does not affect gameplay in
 any way. It is just juice.</p>
-  <p>I love you for reading this far. Go play Electronic Super Joy, then go
-star and fork the Arcadia project on github. Then go hug a friend, or pet a
-cat. Do something nice, and have a wonderful day!</p>
+  <p>I love you for reading this far. Go play
+<a href="http://store.steampowered.com/app/244870/">Electronic Super Joy</a>,
+then go star and fork the Arcadia project on github. Then go hug a friend,
+or pet a cat. Do something nice, and have a wonderful day!</p>
 
 </div>
 <?php
