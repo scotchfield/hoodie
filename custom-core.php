@@ -78,15 +78,15 @@ function ag_default_action() {
         if ( FALSE == $character ) {
             $character_id = add_character(
                 $user[ 'id' ], $user[ 'user_name' ] );
-            $_SESSION[ 'c' ] = $character_id;
-            // @todo: arcadia should do this, not me
-        } else {
-            $_SESSION[ 'c' ] = $character[ 'id' ];
-            $GLOBALS[ 'character' ] = $character;
 
-            do_action( 'select_character' );
-            // @todo: arcadia should definitely be doing this
+            $character = get_character_by_name( $user[ 'user_name' ] );
+            // @todo: arcadia should do this, not me
         }
+
+        $_SESSION[ 'c' ] = $character[ 'id' ];
+        $GLOBALS[ 'character' ] = $character;
+
+        do_action( 'select_character' );
 
         header( 'Location: ' . GAME_URL );
         exit;
@@ -634,9 +634,13 @@ function ag_achievement_print( $args ) {
 
     $achievement = get_achievement( $args[ 'achievement_id' ] );
     $meta = json_decode( $achievement[ 'meta_value' ], TRUE );
-
-    echo( '<h2>Achievement: ' . $meta[ 'name' ] . '</h2>' .
-          '<h3>' . $meta[ 'text' ] . '</h3>' );
+?>
+<div class="row text-center" style="border: 4px solid yellow; padding: 16px;">
+  <h2>You have completed a new achievement!</h2>
+  <h3><?php echo( $meta[ 'name' ] ); ?></h3>
+  <h4><?php echo( $meta[ 'text' ] ); ?></h4>
+</div>
+<?php
 }
 
 add_action( 'award_achievement', 'ag_achievement_print' );
