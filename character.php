@@ -33,6 +33,45 @@ function ag_profile_content() {
     if ( $character[ 'ability' ] >= 1000 ) {
         award_achievement( 106 );
     }
+
+    ag_print_character( $character );
+}
+
+add_action( 'do_page_content', 'ag_profile_content' );
+
+function ag_char_content() {
+    if ( strcmp( 'char', game_get_action() ) ) {
+       return;
+    }
+
+?>
+<div class="row text-right">
+  <h1 class="page_section">Profile</h1>
+</div>
+<?php
+
+    if ( ! isset( $_GET[ 'id' ] ) ) {
+        return;
+    }
+
+    $char_id = intval( $_GET[ 'id' ] );
+    $char = get_character_by_id( $char_id );
+
+    if ( FALSE == $char ) {
+        return;
+    }
+
+    $char[ 'meta' ] = get_character_meta( $char_id );
+
+    $char = ag_get_unpacked_character( $char );
+
+    ag_print_character( $char );
+}
+
+add_action( 'do_page_content', 'ag_char_content' );
+
+
+function ag_print_character( $character ) {
 ?>
 <div class="row">
   <div class="col-md-6">
@@ -44,7 +83,7 @@ function ag_profile_content() {
       <dt>Health</dt>
       <dd><?php echo( $character[ 'health' ] ); ?></dd>
       <dt>Stamina</dt>
-      <dd><?php echo( round( $character[ 'stamina' ], $precision = 2 ) ); ?> / 
+      <dd><?php echo( round( $character[ 'stamina' ], $precision = 2 ) ); ?> /
           <?php echo( $character[ 'stamina_max' ] ); ?></dd>
       <dt>Gold</dt>
       <dd><?php echo( $character[ 'gold' ] ); ?></dd>
@@ -69,21 +108,25 @@ function ag_profile_content() {
         'Hoodie' => 'hoodie',
         'Weapon' => 'weapon',
         'Head' => 'head',
-      	'Chest' => 'chest',
-      	'Legs' => 'legs',
-      	'Hands' => 'hands',
-      	'Feet' => 'feet',
-      	'Eyes' => 'eyes',
-      	'Fingers' => 'fingers',
-      	'Toes' => 'toes',
-      	'Nose' => 'nose',
-      	'Neck' => 'neck',
-      	'Wrists' => 'wrists',
+        'Chest' => 'chest',
+        'Legs' => 'legs',
+        'Hands' => 'hands',
+        'Feet' => 'feet',
+        'Eyes' => 'eyes',
+        'Fingers' => 'fingers',
+        'Toes' => 'toes',
+        'Nose' => 'nose',
+        'Neck' => 'neck',
+        'Wrists' => 'wrists',
     );
 
     foreach ( $gear as $k => $v ) {
         echo( "      <dt>$k</dt>\n" );
-        echo( '      <dd>' . ag_gear_string( $character[ $v ] ) . "</dd>\n" );
+        $gear = FALSE;
+        if ( isset( $character[ $v ] ) ) {
+            $gear = $character[ $v ];
+        }
+        echo( '      <dd>' . ag_gear_string( $gear ) . "</dd>\n" );
     }
 ?>
     </dl>
@@ -108,17 +151,8 @@ function ag_profile_content() {
   </div>
 
 </div>
-
 <?php
-//debug_print( $character );
-
-/*    for ( $i = 0; $i < 200; $i++ ) {
-        debug_print( ag_gear_string( ag_get_gear( ag_get_gear_slot(), $i ) ) );
-    }/**/
 }
-
-add_action( 'do_page_content', 'ag_profile_content' );
-
 
 function ag_sort_stats_cmp( $a, $b ) {
     if ( 'Hoodie' == $a ) {

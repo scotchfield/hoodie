@@ -105,56 +105,86 @@ function ag_unpack_character() {
         return;
     }
 
+    $character = ag_get_unpacked_character( $character );
+}
+
+function ag_meta_int( $char, $key_type, $meta_key ) {
+    if ( ! isset( $char[ 'meta' ][ $key_type ] ) ) {
+        return 0;
+    } else if ( ! isset( $char[ 'meta' ][ $key_type ][ $meta_key ] ) ) {
+        return 0;
+    }
+
+    return intval( $char[ 'meta' ][ $key_type ][ $meta_key ] );
+}
+
+function ag_meta_float( $char, $key_type, $meta_key ) {
+    if ( ! isset( $char[ 'meta' ][ $key_type ] ) ) {
+         return 0;
+    } else if ( ! isset( $char[ 'meta' ][ $key_type ][ $meta_key ] ) ) {
+         return 0;
+    }
+
+    return floatval( $char[ 'meta' ][ $key_type ][ $meta_key ] );
+}
+
+function ag_get_unpacked_character( $char ) {
     $gear_obj = ag_get_gear_obj();
 
-    $character[ 'x' ] = character_meta_int( ag_meta_type_character, AG_POS_X );
-    $character[	'y' ] = character_meta_int( ag_meta_type_character, AG_POS_Y );
+    $char[ 'x' ] = ag_meta_int( $char, ag_meta_type_character, AG_POS_X );
+    $char[ 'y' ] = ag_meta_int( $char, ag_meta_type_character, AG_POS_Y );
 
-    $character[ 'stamina' ] = character_meta_float(
+    $char[ 'stamina' ] = ag_meta_float( $char,
         ag_meta_type_character, AG_STAMINA );
-    $character[ 'stamina_max' ] = 100.0;
-    $character[ 'stamina_timestamp' ] = character_meta_int(
+    $char[ 'stamina_max' ] = 100.0;
+    $char[ 'stamina_timestamp' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_STAMINA_TIMESTAMP );
 
-    $character[ 'gold' ] = character_meta_int(
+    $char[ 'gold' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_GOLD );
-    $character[ 'xp' ] = character_meta_int(
+    $char[ 'xp' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_XP );
 
-    $character[ 'wins' ] = character_meta_int(
+    $char[ 'wins' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_WINS );
-    $character[ 'losses' ] = character_meta_int(
+    $char[ 'losses' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_LOSSES );
-    $character[ 'max_damage_done' ] = character_meta_int(
+    $char[ 'max_damage_done' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_MAX_DAMAGE_DONE );
-    $character[ 'max_damage_taken' ] = character_meta_int(
+    $char[ 'max_damage_taken' ] = ag_meta_int( $char,
         ag_meta_type_character, AG_MAX_DAMAGE_TAKEN );
 
-    $character[ 'stats' ] = array();
-    $character[ 'ability' ] = 0.0;
+    $char[ 'stats' ] = array();
+    $char[ 'ability' ] = 0.0;
 
     foreach ( $gear_obj as $k => $v ) {
-        $obj = json_decode( character_meta( ag_meta_type_character, $v ),
+        if ( ! isset( $char[ 'meta' ][ ag_meta_type_character ] ) ) {
+            continue;
+        }
+
+        $obj = json_decode( $char[ 'meta' ][ ag_meta_type_character ][ $v ],
             $assoc = TRUE );
-        $character[ $k ] = $obj;
+        $char[ $k ] = $obj;
 
         if ( ! isset( $obj[ 'stats' ] ) ) {
             continue;
         }
 
         foreach ( $obj[ 'stats' ] as $stat_k => $stat_v ) {
-            if ( ! isset( $character[ 'stats' ][ $stat_k ] ) ) {
-                $character[ 'stats' ][ $stat_k ] = 0;
+            if ( ! isset( $char[ 'stats' ][ $stat_k ] ) ) {
+                $char[ 'stats' ][ $stat_k ] = 0;
             }
 
-            $character[ 'stats' ][ $stat_k ] += floatval( $stat_v );
+            $char[ 'stats' ][ $stat_k ] += floatval( $stat_v );
             if ( 'Hoodie' != $stat_k ) {
-                $character[ 'ability' ] += floatval( $stat_v );
+                $char[ 'ability' ] += floatval( $stat_v );
             }
         }
     }
 
-    $character[ 'health' ] = 10 + $character[ 'ability' ] * 2;
+    $char[ 'health' ] = 10 + $char[ 'ability' ] * 2;
+
+    return $char;
 }
 
 function ag_login() {
