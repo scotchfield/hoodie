@@ -257,6 +257,8 @@ function ag_header() {
               <ul class="dropdown-menu">
                 <li><a href="?action=profile">Profile</a></li>
                 <li><a href="?action=achievements">Achievements</a></li>
+                <li class="divider">
+                <li><a href="?action=online">Characters Online</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -682,7 +684,7 @@ function ag_thank_you() {
     global $character;
 
     if ( strcmp( 'thank_you', game_get_action() ) ) {
-       return;
+        return;
     }
 
     if ( FALSE == $character ) {
@@ -709,3 +711,25 @@ Github, if that's your sort of thing, and enjoy the rest of the game!</p>
 }
 
 add_action( 'do_page_content', 'ag_thank_you' );
+
+function ag_online() {
+    if ( strcmp( 'online', game_get_action() ) ) {
+        return;
+    }
+
+    $char_obj = get_heartbeat_characters( 300 );
+?>
+<div class="row text-right">
+  <h1 class="page_section">Characters Online</h1>
+</div>
+<div class="row text-center">
+<?php
+    foreach ( $char_obj as $char ) {
+        echo( '<h3><a href="#">' . $char[ 'character_name' ] . '</a></h3>' );
+    }
+?>
+</div>
+<?php
+}
+
+add_action( 'do_page_content', 'ag_online' );
