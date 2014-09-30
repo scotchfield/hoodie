@@ -699,7 +699,7 @@ function ag_achievement_print( $args ) {
     $achievement = get_achievement( $args[ 'achievement_id' ] );
     $meta = json_decode( $achievement[ 'meta_value' ], TRUE );
 ?>
-<div class="row text-center" style="border: 4px solid yellow; padding: 16px;">
+<div class="row text-center alert">
   <h2>You have completed a new achievement!</h2>
   <h3><?php echo( $meta[ 'name' ] ); ?></h3>
   <h4><?php echo( $meta[ 'text' ] ); ?></h4>

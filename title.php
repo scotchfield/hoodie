@@ -81,7 +81,7 @@ $err_obj = array(
 if ( isset( $_GET[ 'notify' ] ) ) {
     $notify = intval( $_GET[ 'notify' ] );
     if ( isset( $err_obj[ $notify ] ) ) {
-        echo( '<div class="row text-center"><h2>' .
+        echo( '<div class="row text-center alert"><h2>' .
               $err_obj[ $notify ] . '</h2></div>' );
     }
 }
