@@ -28,7 +28,9 @@ function ag_map_content() {
   <h2>Move to a new location</h2>
 </div>
 <?php
-    for ( $i = $character[ 'y' ] + 1; $i >= $character[ 'y' ] - 1; $i-- ) {
+    ag_draw_map( $character[ 'x' ], $character[ 'y' ] );
+
+/*    for ( $i = $character[ 'y' ] + 1; $i >= $character[ 'y' ] - 1; $i-- ) {
         echo( '<div class="row text-center">' );
         for ( $j = $character[ 'x' ] - 1; $j <= $character[ 'x' ] + 1; $j++ ) {
 
@@ -64,7 +66,7 @@ function ag_map_content() {
             echo( '</div>' );
         }
         echo( '</div>' );
-    }
+    }*/
 
 
 
@@ -72,6 +74,44 @@ function ag_map_content() {
 
 add_action( 'do_page_content', 'ag_map_content' );
 
+function ag_draw_map( $x, $y ) {
+    for ( $i = $y + 1; $i >= $y - 1; $i-- ) {
+        echo( '<div class="row text-center">' );
+        for ( $j = $x - 1; $j <= $x + 1; $j++ ) {
+
+            $char_origin = FALSE;
+            if ( $i == $y && $j == $x ) {
+                $char_origin = TRUE;
+            }
+
+            if ( $j == $x - 1 ) {
+                echo( '<div class="col-xs-2 col-xs-offset-3">' );
+            } else {
+                echo( '<div class="col-xs-2">' );
+            }
+            $obj = ag_get_map_state( $j, $i );
+            echo( '<div>' );
+
+            if ( ! $char_origin ) {
+                echo( '<a href="game-setting.php?setting=map_move&x=' . $j .
+                      '&y=' . $i . '">' );
+            }
+
+            echo( '<img src="' . GAME_CUSTOM_STYLE_URL . '/img/' .
+                  $obj[ 'height' ] . '.png" width="96" height="96">' );
+
+            if ( ! $char_origin ) {
+                echo( '</a>' );
+            }
+
+            echo( '</div>' );
+            echo( '<div class="map_overlay">(<b>' . $j .
+                  '</b>, <b>' . $i . '</b>)</div>' );
+            echo( '</div>' );
+        }
+        echo( '</div>' );
+    }
+}
 
 function ag_get_map_state( $x, $y ) {
     mt_srand( $x );

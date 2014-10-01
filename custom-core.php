@@ -5,6 +5,7 @@ require( GAME_CUSTOM_PATH . 'title.php' );
 require( GAME_CUSTOM_PATH . 'character.php' );
 require( GAME_CUSTOM_PATH . 'combat.php' );
 require( GAME_CUSTOM_PATH . 'map.php' );
+require( GAME_CUSTOM_PATH . 'tutorial.php' );
 require( GAME_CUSTOM_PATH . 'vendor.php' );
 
 define( 'ag_meta_type_character',            1 );
@@ -26,6 +27,8 @@ define( 'AG_WINS', 40 );
 define( 'AG_LOSSES', 41 );
 define( 'AG_MAX_DAMAGE_DONE', 42 );
 define( 'AG_MAX_DAMAGE_TAKEN', 43 );
+
+define( 'AG_TUTORIAL', 50 );
 
 define( 'AG_HOODIE', 100 );
 define( 'AG_WEAPON', 101 );
@@ -209,6 +212,7 @@ function ag_login() {
         array(
             AG_POS_X, AG_POS_Y,
             AG_WINS, AG_LOSSES, AG_MAX_DAMAGE_DONE, AG_MAX_DAMAGE_TAKEN,
+            AG_TUTORIAL,
         ) );
 
     if ( '' == character_meta( ag_meta_type_character, AG_HOODIE ) ) {
