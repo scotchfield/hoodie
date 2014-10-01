@@ -306,8 +306,15 @@ function ag_header() {
                 <li><a href="?action=vendor">Vendor</a></li>
               </ul>
             </li>
-            <li><a href="?action=about">About</a></li>
-            <li><a href="?action=upgrade">Upgrade Hoodie</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle"
+                 data-toggle="dropdown">About <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="?action=about">About Hoodiecraft</a></li>
+                <li class="divider">
+                <li><a href="?action=upgrade">Upgrade Hoodie</a></li>
+              </ul>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="game-logout.php">Log out</a></li>
@@ -370,6 +377,9 @@ and make stuff!
   <h2>Why?</h2>
   <p>I was inspired by a hoodie! Check <a href="?action=upgrade">this
 other page</a> for the story.
+  <h2>What's up with the name?</h2>
+  <p>I played a lot of Warcraft! This has less war and more hoodie.
+Watch for the sequel, World of Hoodiecraft, coming April 5th, 1993!</p>
   <h2>What's up with all the stats?</h2>
   <p>That's a great question! I hope it makes you smile. :)</p>
 <?php
@@ -409,8 +419,9 @@ success. And if I reach $136.80USD in donations, I'll ship a hoodie to
 the sweet hoodie in the first place. Oh, and I'll open source this game
 immediately, just like Arcadia, so that you can build hoodie games of
 your own. :)</p>
-  <p>A one-time donation of at least one Canadian dollar will award you
-the prestigious Red Hoodie, with a Hoodie stat of 100. The only thing it
+  <p>A one-time donation of at least one dollar will award you
+the prestigious
+<a class="legendary" href="#" onmouseover="popup('<span class=&quot;item_name&quot;>Epic Red Hoodie</span><hr><span class=&quot;legendary&quot;>Legendary Quality</span><br><span>Hoodie: <b>100</b><br></span>')" onmouseout="popout()">Epic Red Hoodie</a>, with a Hoodie stat of 100. The only thing it
 does, like all hoodies, is increase your stamina refresh rate, up to double
 the standard rate. Rest assured, you will never find a sweeter hoodie.</p>
   <p>And this is purely optional--this item does not affect how powerful
@@ -420,11 +431,11 @@ most powerful hoodie that can drop in the game. If you're patient enough,
 then you don't even need to think about this as an option, unless you
 just want to say thanks. (If that's the case, just send me a greeting on
 Twitter, and that's more than enough!)</p>
-  <p>I love you for reading this far. Go play
-<a href="http://store.steampowered.com/app/244870/">Electronic Super Joy</a>,
-then go star and fork the Arcadia project on github. Then go hug a friend,
-or pet a cat. Do something nice, and have a wonderful day!</p>
 
+</div>
+<div class="row text-center">
+  <h2>Gear: <a class="legendary" href="#" onmouseover="popup('<span class=&quot;item_name&quot;>Epic Red Hoodie</span><hr><span class=&quot;legendary&quot;>Legendary Quality</span><br><span>Hoodie: <b>100</b><br></span>')" onmouseout="popout()">Epic Red Hoodie</a></h2>
+  <h2>Cost: One Buck. $1. A Loonie.</h2>
 </div>
 <div class="row text-center">
 
@@ -436,6 +447,13 @@ or pet a cat. Do something nice, and have a wonderful day!</p>
 </form>
 
 </div>
+<div class="row text-left" style="padding-top:16px;">
+  <p>I love you for reading this far. Go play
+<a href="http://store.steampowered.com/app/244870/">Electronic Super Joy</a>,
+then go star and fork the Arcadia project on github. Then go hug a friend,
+or pet a cat. Do something nice, and have a wonderful day!</p>
+</div>
+
 <?php
 }
 
