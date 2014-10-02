@@ -777,7 +777,8 @@ function ag_online() {
 <div class="row text-center">
 <?php
     foreach ( $char_obj as $char ) {
-        echo( '<h3><a href="#">' . $char[ 'character_name' ] . '</a></h3>' );
+        echo( '<h3><a href="?action=char&id=' . $char[ 'id' ] .
+              '">' . $char[ 'character_name' ] . '</a></h3>' );
     }
 ?>
 </div>
