@@ -1,4 +1,4 @@
 hoodie
 ======
 
-Hoodiecraft, an Arcadia game
+Hoodiequest, an Arcadia game.

@@ -310,7 +310,7 @@ function ag_header() {
               <a href="#" class="dropdown-toggle"
                  data-toggle="dropdown">About <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="?action=about">About Hoodiecraft</a></li>
+                <li><a href="?action=about">About Hoodiequest</a></li>
                 <li class="divider">
                 <li><a href="?action=upgrade">Upgrade Hoodie</a></li>
               </ul>
@@ -378,8 +378,9 @@ and make stuff!
   <p>I was inspired by a hoodie! Check <a href="?action=upgrade">this
 other page</a> for the story.
   <h2>What's up with the name?</h2>
-  <p>I played a lot of Warcraft! This has less war and more hoodie.
-Watch for the sequel, World of Hoodiecraft, coming April 5th, 1993!</p>
+  <p>The game was called Hoodiecraft for a couple of weeks, because I
+used to play a lot of Warcraft. This has less war and more hoodie.
+Watch for the sequel, World of Hoodiequest, coming April 5th, 1993!</p>
   <h2>What's up with all the stats?</h2>
   <p>That's a great question! I hope it makes you smile. :)</p>
 <?php

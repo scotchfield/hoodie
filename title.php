@@ -33,8 +33,8 @@ function ag_title_content() {
 
   <div class="row">
     <div class="col-md-8 text-left">
-      <img src="<?php echo( GAME_CUSTOM_STYLE_URL ); ?>hoodiecraft.png"
-           width="90%">
+      <img src="<?php echo( GAME_CUSTOM_STYLE_URL ); ?>hoodiequest.png"
+           width="80%">
     </div>
     <div class="col-md-4">
 
@@ -94,7 +94,7 @@ if ( isset( $_GET[ 'notify' ] ) ) {
     <div class="col-xs-6">
 
     <h3>Battle foes. Get loot. Take off every zig.</h3>
-    <p>Hoodiecraft is a free browser-based role playing game. Your mission,
+    <p>Hoodiequest is a free browser-based role playing game. Your mission,
 should you choose to accept it, is to fight your way up from nothing to
 become one of the greatest warriors in the land.</p>
 
@@ -160,7 +160,7 @@ be the adventurer to find it?</p>
 
     <div class="col-md-4 text-right">
       <h4>Fun, and free!</h4>
-      <p>Hoodiecraft is maintained by
+      <p>Hoodiequest is maintained by
 <a href="https://twitter.com/scotchfield">@scotchfield</a>
 (<a href="https://github.com/scotchfield">github</a>), and built using
 the <a href="https://github.com/scotchfield/arcadia">Arcadia open-source web game engine</a>.</p>

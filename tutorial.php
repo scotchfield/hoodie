@@ -40,7 +40,7 @@ function ag_tutorial_print() {
   <h1 class="page_section">Tutorial</h1>
 </div>
 <div class="row text-center">
-  <h2>Hoodiecraft is a game about gear.</h2>
+  <h2>Hoodiequest is a game about gear.</h2>
   <p class="lead">There are lots of heroes in this cold, cold world of ours.
 We're all tough, and we can all hold our own in combat.</p>
   <p class="lead"><b>The only thing that makes us stronger in this frozen
