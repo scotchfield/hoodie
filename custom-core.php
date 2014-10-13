@@ -487,6 +487,8 @@ function ag_regen_stamina() {
         $new_stamina = min( 100, $stamina + $stamina_gain );
         update_character_meta( $character[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
+
+        $character[ 'stamina' ] = $new_stamina;
     }
 
     update_character_meta( $character[ 'id' ], ag_meta_type_character,
