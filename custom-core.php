@@ -193,6 +193,8 @@ function ag_get_unpacked_character( $char ) {
 function ag_login() {
     global $character;
 
+    log_add( 1, $character[ 'id' ], '' );
+
     $gear_obj = ag_get_gear_obj();
 
     // @todo: should use array_values in ensure calls (or db calls?)
