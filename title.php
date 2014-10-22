@@ -178,7 +178,7 @@ the <a href="https://github.com/scotchfield/arcadia">Arcadia open-source web gam
 </body>
 </html>
 
-<?
+<?php
 }
 
 add_action( 'do_page_content', 'ag_title_content' );
