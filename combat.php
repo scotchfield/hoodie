@@ -120,6 +120,8 @@ then try to engage in combat once more.</p>
                 award_achievement( 1 );
             } else if ( 2 == $foe[ 'boss_id' ] ) {
                 award_achievement( 2 );
+            } else if ( 3 == $foe[ 'boss_id' ] ) {
+                award_achievement( 3 );
             }
         }
 
@@ -144,7 +146,7 @@ then try to engage in combat once more.</p>
             AG_XP, $new_xp );
 
         mt_srand();
-        if ( ( isset( $foe[ 'boss_id' ] ) ) || ( mt_rand( 1, 100 ) <= 50 ) ) {
+        if ( ( isset( $foe[ 'boss_id' ] ) ) || ( mt_rand( 1, 100 ) <= 100 ) ) {
             echo( '<h4>A piece of incredible loot falls to the ground!</h4>' );
 
             $gear_drop = array(
@@ -359,14 +361,6 @@ function ag_boss_content() {
   <h3><a href="?action=boss&id=1">Boss 1</a></h3>
   <h3><a href="?action=boss&id=2">Boss 2</a></h3>
   <h3><a href="?action=boss&id=3">Boss 3</a></h3>
-  <h3><a href="?action=boss&id=4">Boss 4</a></h3>
-  <h3><a href="?action=boss&id=5">Boss 5</a></h3>
-  <h3><a href="?action=boss&id=6">Boss 6</a></h3>
-  <h3><a href="?action=boss&id=7">Boss 7</a></h3>
-  <h3><a href="?action=boss&id=8">Boss 8</a></h3>
-  <h3><a href="?action=boss&id=9">Boss 9</a></h3>
-  <h3><a href="?action=boss&id=10">Boss 10</a></h3>
-
 </div>
 <?php
     }
