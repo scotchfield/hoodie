@@ -456,7 +456,10 @@ Twitter, and that's more than enough!)</p>
 then go star and fork the Arcadia project on github. Then go hug a friend,
 or pet a cat. Do something nice, and have a wonderful day!</p>
 </div>
-
+<div class="row text-right" style="padding-top:16px;">
+  <p>(and if you just want the hoodie without paying the buck, just
+  <a href="<?php echo( GAME_URL ); ?>?action=thank_you">click here</a>!)</p>
+</div>
 <?php
 }
 
