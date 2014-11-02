@@ -1,7 +1,9 @@
 <?php
 
 function ag_combat_content() {
-    if ( strcmp( 'combat', game_get_action() ) ) {
+    global $game;
+
+    if ( strcmp( 'combat', $game->get_action() ) ) {
        return;
     }
 
@@ -331,9 +333,9 @@ $custom_setting_map[ 'equip_gear' ] = 'ag_equip_gear';
 
 
 function ag_boss_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'boss', game_get_action() ) ) {
+    if ( strcmp( 'boss', $game->get_action() ) ) {
        return;
     }
 ?>

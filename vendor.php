@@ -3,9 +3,9 @@
 define( 'AG_VENDOR_GEAR_MAX', 3 );
 
 function ag_vendor_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'vendor', game_get_action() ) ) {
+    if ( strcmp( 'vendor', $game->get_action() ) ) {
        return;
     }
 ?>

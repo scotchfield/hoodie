@@ -3,7 +3,7 @@
 define( 'TUTORIAL_BIT_COMPLETE', 0 );
 
 function ag_tutorial_check() {
-    global $character;
+    global $character, $game;
 
     if ( FALSE == $character ) {
         return;
@@ -11,15 +11,16 @@ function ag_tutorial_check() {
 
     $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
     if ( ! get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
-        game_set_action( 'tutorial' );
+        $game->set_action( 'tutorial' );
     }
 }
 
 add_action( 'action_set', 'ag_tutorial_check' );
 
 function ag_tutorial_print() {
-    global $character;
-    if ( ! strcmp( 'tutorial', game_get_action() ) ) {
+    global $character, $game;
+
+    if ( ! strcmp( 'tutorial', $game->get_action() ) ) {
         $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
 
         if ( ! get_bit( $t, 1 ) ) {

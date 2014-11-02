@@ -1,9 +1,9 @@
 <?php
 
 function ag_map_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'map', game_get_action() ) ) {
+    if ( strcmp( 'map', $game->get_action() ) ) {
        return;
     }
 

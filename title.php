@@ -1,9 +1,9 @@
 <?php
 
 function ag_title_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'title', game_get_action() ) ) {
+    if ( strcmp( 'title', $game->get_action() ) ) {
         return;
     }
 

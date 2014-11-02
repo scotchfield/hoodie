@@ -71,10 +71,10 @@ function ag_get_gear_slot() {
 }
 
 function ag_default_action() {
-    global $user, $character;
+    global $user, $character, $game;
 
     if ( FALSE == $user ) {
-        game_set_action( 'title' );
+        $game->set_action( 'title' );
     } else if ( FALSE == $character ) {
         $character = get_character_by_name( $user[ 'user_name' ] );
 
@@ -94,7 +94,7 @@ function ag_default_action() {
         header( 'Location: ' . GAME_URL );
         exit;
     } else {
-        game_set_action( 'profile' );
+        $game->set_action( 'profile' );
     }
 }
 
@@ -240,9 +240,9 @@ function ag_login() {
 add_action( 'select_character', 'ag_login' );
 
 function ag_header() {
-    global $user, $character;
+    global $user, $character, $game;
 
-    if ( ! strcmp( 'title', game_get_action() ) ) {
+    if ( ! strcmp( 'title', $game->get_action() ) ) {
         return;
     }
 
@@ -252,7 +252,7 @@ function ag_header() {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo( GAME_NAME ); ?> (<?php echo( game_get_action() );
+    <title><?php echo( GAME_NAME ); ?> (<?php echo( $game->get_action() );
         ?>)</title>
     <link rel="stylesheet" href="<?php echo( GAME_CUSTOM_STYLE_URL );
         ?>bootstrap.min.css">
@@ -333,9 +333,9 @@ function ag_header() {
 }
 
 function ag_footer() {
-    global $character;
+    global $character, $game;
 
-    if ( ! strcmp( 'title', game_get_action() ) ) {
+    if ( ! strcmp( 'title', $game->get_action() ) ) {
         return;
     }
 
@@ -359,7 +359,9 @@ add_action( 'game_footer', 'ag_footer' );
 
 
 function ag_about() {
-    if ( strcmp( 'about', game_get_action() ) ) {
+    global $game;
+
+    if ( strcmp( 'about', $game->get_action() ) ) {
        return;
     }
 
@@ -389,7 +391,9 @@ Watch for the sequel, World of Hoodiequest, coming April 5th, 1993!</p>
 }
 
 function ag_upgrade() {
-    if ( strcmp( 'upgrade', game_get_action() ) ) {
+    global $game;
+
+    if ( strcmp( 'upgrade', $game->get_action() ) ) {
        return;
     }
 
@@ -741,9 +745,9 @@ add_action( 'award_achievement', 'ag_achievement_print' );
 
 
 function ag_thank_you() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'thank_you', game_get_action() ) ) {
+    if ( strcmp( 'thank_you', $game->get_action() ) ) {
         return;
     }
 
@@ -773,7 +777,9 @@ Github, if that's your sort of thing, and enjoy the rest of the game!</p>
 add_action( 'do_page_content', 'ag_thank_you' );
 
 function ag_online() {
-    if ( strcmp( 'online', game_get_action() ) ) {
+    global $game;
+
+    if ( strcmp( 'online', $game->get_action() ) ) {
         return;
     }
 

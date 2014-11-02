@@ -1,9 +1,9 @@
 <?php
 
 function ag_profile_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'profile', game_get_action() ) ) {
+    if ( strcmp( 'profile', $game->get_action() ) ) {
        return;
     }
 
@@ -47,7 +47,9 @@ function ag_profile_content() {
 add_action( 'do_page_content', 'ag_profile_content' );
 
 function ag_char_content() {
-    if ( strcmp( 'char', game_get_action() ) ) {
+    global $game;
+
+    if ( strcmp( 'char', $game->get_action() ) ) {
        return;
     }
 
@@ -171,9 +173,9 @@ function ag_sort_stats_cmp( $a, $b ) {
 }
 
 function ag_achievements_content() {
-    global $character;
+    global $character, $game;
 
-    if ( strcmp( 'achievements', game_get_action() ) ) {
+    if ( strcmp( 'achievements', $game->get_action() ) ) {
        return;
     }
 
