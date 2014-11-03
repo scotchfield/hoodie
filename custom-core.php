@@ -44,6 +44,17 @@ define( 'AG_NOSE', 110 );
 define( 'AG_NECK', 111 );
 define( 'AG_WRISTS', 112 );
 
+
+function ag_pre_load() {
+    global $game;
+
+    $game->set_component( 'achievement', new ArcadiaAchievement() );
+echo( 'herp de derp' );
+}
+
+add_action( 'pre_load', 'ag_pre_load' );
+
+
 function ag_get_gear_obj() {
     return array(
         'hoodie' => AG_HOODIE,
@@ -730,7 +741,8 @@ function ag_achievement_print( $args ) {
         return;
     }
 
-    $achievement = get_achievement( $args[ 'achievement_id' ] );
+    $achievement = $game->c( 'achievement' )->get_achievement(
+        $args[ 'achievement_id' ] );
     $meta = json_decode( $achievement[ 'meta_value' ], TRUE );
 ?>
 <div class="row text-center alert">

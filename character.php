@@ -13,25 +13,25 @@ function ag_profile_content() {
 </div>
 <?php
     if ( $character[ 'ability' ] >= 10 ) {
-        award_achievement( 100 );
+        $game->c( 'achievement' )->award_achievement( 100 );
     }
     if ( $character[ 'ability' ] >= 25 ) {
-        award_achievement( 101 );
+        $game->c( 'achievement' )->award_achievement( 101 );
     }
     if ( $character[ 'ability' ] >= 50 ) {
-        award_achievement( 102 );
+        $game->c( 'achievement' )->award_achievement( 102 );
     }
     if ( $character[ 'ability' ] >= 100 ) {
-        award_achievement( 103 );
+        $game->c( 'achievement' )->award_achievement( 103 );
     }
     if ( $character[ 'ability' ] >= 250 ) {
-        award_achievement( 104 );
+        $game->c( 'achievement' )->award_achievement( 104 );
     }
     if ( $character[ 'ability' ] >= 500 ) {
-        award_achievement( 105 );
+        $game->c( 'achievement' )->award_achievement( 105 );
     }
     if ( $character[ 'ability' ] >= 1000 ) {
-        award_achievement( 106 );
+        $game->c( 'achievement' )->award_achievement( 106 );
     }
 
     ag_print_character( $character );
@@ -187,13 +187,16 @@ function ag_achievements_content() {
   <div class="col-md-6">
     <h3>Your achievements</h3>
 <?php
-    if ( ( ! isset( $character[ 'meta' ][ game_meta_type_achievement ] ) ) ||
+    if ( ( ! isset( $character[ 'meta' ][
+                        $game->c( 'achievement' )->get_flag_game_meta() ] ) ) ||
          ( 0 == count(
-                    $character[ 'meta' ][ game_meta_type_achievement ] ) ) ) {
+                    $character[ 'meta' ][
+                        $game->c( 'achievement' )->get_flag_game_meta() ] ) ) ) {
         echo( '<h4>None yet!</h4>' );
     } else {
         echo( '<dl class="dl-horizontal">' );
-        $achieve_obj = get_achievements( $character[ 'id' ] );
+        $achieve_obj = $game->c( 'achievement' )->get_achievements(
+            $character[ 'id' ] );
 
         foreach ( $achieve_obj as $achieve ) {
             $meta = json_decode( $achieve[ 'meta_value' ], TRUE );
@@ -210,11 +213,12 @@ function ag_achievements_content() {
     <h3>Achievements Remaining</h3>
     <dl class="dl-horizontal">
 <?php
-    $achieve_obj = get_all_achievements();
+    $achieve_obj = $game->c( 'achievement' )->get_all_achievements();
 
     foreach ( $achieve_obj as $k => $achieve ) {
         if ( isset( $character[ 'meta' ][
-                        game_meta_type_achievement ][ $k ] ) ) {
+                        $game->c( 'achievement' )->get_flag_game_meta() ][
+                        $k ] ) ) {
             continue;
         }
         $meta = json_decode( $achieve[ 'meta_value' ], TRUE );

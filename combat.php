@@ -119,11 +119,11 @@ then try to engage in combat once more.</p>
 
         if ( isset( $foe[ 'boss_id' ] ) ) {
             if ( 1 == $foe[ 'boss_id' ] ) {
-                award_achievement( 1 );
+                $game->c( 'achievement' )->award_achievement( 1 );
             } else if ( 2 == $foe[ 'boss_id' ] ) {
-                award_achievement( 2 );
+                $game->c( 'achievement' )->award_achievement( 2 );
             } else if ( 3 == $foe[ 'boss_id' ] ) {
-                award_achievement( 3 );
+                $game->c( 'achievement' )->award_achievement( 3 );
             }
         }
 
