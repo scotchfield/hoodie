@@ -45,14 +45,13 @@ define( 'AG_NECK', 111 );
 define( 'AG_WRISTS', 112 );
 
 
-function ag_pre_load() {
+function ag_post_load() {
     global $game;
 
     $game->set_component( 'achievement', new ArcadiaAchievement() );
-echo( 'herp de derp' );
 }
 
-add_action( 'pre_load', 'ag_pre_load' );
+add_action( 'post_load', 'ag_post_load' );
 
 
 function ag_get_gear_obj() {
