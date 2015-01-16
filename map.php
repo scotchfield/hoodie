@@ -55,7 +55,7 @@ function ag_draw_map( $x, $y ) {
             echo( '<div>' );
 
             if ( ! $char_origin ) {
-                echo( '<a href="game-setting.php?setting=map_move&x=' . $j .
+                echo( '<a href="game-setting.php?state=map_move&x=' . $j .
                       '&y=' . $i . '">' );
             }
 
@@ -89,26 +89,26 @@ function ag_get_map_state( $x, $y ) {
 }
 
 
-function ag_map_move( $args ) {
+function ag_map_move() {
     global $ag;
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=map';
+    $ag->set_redirect_header( GAME_URL . '?state=map' );
 
-    if ( ! isset( $args[ 'x' ] ) || ! isset( $args[ 'y' ] ) ) {
+    if ( ! $ag->get_arg( 'x' ) || ! $ag->get_arg( 'y' ) ) {
         ag_tip( 'Missing x or y values.' );
         return;
     }
 
-    $xd = abs( abs( $args[ 'x' ] ) - abs( character_meta_int(
+    $xd = abs( abs( $ag->get_arg( 'x' ) ) - abs( $ag->c( 'user' )->character_meta_int(
         ag_meta_type_character, AG_POS_X ) ) );
-    $yd = abs( abs( $args[ 'y' ] ) - abs( character_meta_int(
+    $yd = abs( abs( $ag->get_arg( 'y' ) ) - abs( $ag->c( 'user' )->character_meta_int(
         ag_meta_type_character, AG_POS_Y ) ) );
 
     if ( $xd > 1 || $yd > 1 || ( $xd == 0 && $yd == 0 ) ) {
         return;
     }
 
-    $stamina = character_meta_float( ag_meta_type_character, AG_STAMINA );
+    $stamina = $ag->c( 'user' )->character_meta_float( ag_meta_type_character, AG_STAMINA );
     $stamina_req = sqrt( $xd + $yd );
 
     if ( $stamina < $stamina_req ) {
@@ -116,12 +116,12 @@ function ag_map_move( $args ) {
     }
 
     $new_stamina = $stamina - $stamina_req;
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_STAMINA, $new_stamina );
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_POS_X, $args[ 'x' ] );
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_POS_Y, $args[ 'y' ] );
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        AG_POS_X, $ag->get_arg( 'x' ) );
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        AG_POS_Y, $ag->get_arg( 'y' ) );
 }
 
-$custom_setting_map[ 'map_move' ] = 'ag_map_move';
+$ag->add_state( 'do_setting', 'map_move', 'ag_map_move' );

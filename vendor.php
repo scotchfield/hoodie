@@ -69,7 +69,7 @@ function ag_get_vendor_gear( $x, $y, $level ) {
 function ag_vendor_buy( $args ) {
     global $ag;
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=vendor';
+    $ag->set_redirect_header( GAME_URL . '?state=vendor' );
 
     if ( ! isset( $args[ 'id' ] ) ) {
         return;
@@ -108,10 +108,10 @@ function ag_vendor_buy( $args ) {
         $ag->char[ 'id' ], ag_meta_type_character,
         $gear[ 'slot' ], json_encode( $gear, $assoc = TRUE ) );
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=character';
+    $ag->set_redirect_header( GAME_URL . '?state=character' );
 
     ag_tip( 'You purchase the ' . ag_gear_string( $gear ) . ' for ' .
             $cost . ' gold.' );
 }
 
-$custom_setting_map[ 'vendor_buy' ] = 'ag_vendor_buy';
+$ag->add_state( 'do_setting', 'vendor_buy', 'ag_vendor_buy' );

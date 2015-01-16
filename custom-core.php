@@ -798,7 +798,7 @@ function ag_online() {
         return;
     }
 
-    $char_obj = get_heartbeat_characters( 300 );
+    $char_obj = $ag->c( 'heartbeat' )->get_heartbeat_characters( 300 );
 ?>
 <div class="row text-right">
   <h1 class="page_section">Characters Online</h1>

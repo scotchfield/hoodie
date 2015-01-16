@@ -66,13 +66,13 @@ function ag_char_content() {
     }
 
     $char_id = intval( $_GET[ 'id' ] );
-    $char = get_character_by_id( $char_id );
+    $char = $ag->c( 'user' )->get_character_by_id( $char_id );
 
     if ( FALSE == $char ) {
         return;
     }
 
-    $char[ 'meta' ] = get_character_meta( $char_id );
+    $char[ 'meta' ] = $ag->c( 'user' )->get_character_meta( $char_id );
 
     $char = ag_get_unpacked_character( $char );
 

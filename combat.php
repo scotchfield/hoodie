@@ -29,7 +29,7 @@ function ag_do_combat( $map_obj = FALSE, $foe = FALSE ) {
 
     $gear_obj = ag_get_gear_obj();
 
-    $stamina = character_meta_float( ag_meta_type_character, AG_STAMINA );
+    $stamina = $ag->c( 'user' )->character_meta_float( ag_meta_type_character, AG_STAMINA );
 
     if ( $stamina < 1 ) {
 ?>
@@ -108,12 +108,12 @@ then try to engage in combat once more.</p>
               'back to a safe spot and heal.</p>' );
 
         $new_stamina = max( 0, $stamina - 10.0 );
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
-        $new_losses = character_meta_int(
+        $new_losses = $ag->c( 'user' )->character_meta_int(
             ag_meta_type_character, AG_LOSSES ) + 1;
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_LOSSES, $new_losses );
     } else if ( $health_foe <= 0 ) {
         echo( '<div class="row text-center">' );
@@ -130,23 +130,23 @@ then try to engage in combat once more.</p>
         }
 
         $new_stamina = $stamina - 1.0;
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
-        $new_wins = character_meta_int(
+        $new_wins = $ag->c( 'user' )->character_meta_int(
             ag_meta_type_character, AG_WINS ) + 1;
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_WINS, $new_wins );
 
         echo( '<h4>You gain ' . $foe[ 'gold' ] . ' gold.</h4>' );
         $new_gold = $ag->char[ 'gold' ] + $foe[ 'gold' ];
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_GOLD, $new_gold );
 
         echo( '<h4>You gain ' . $foe[ 'ability' ] .
               ' experience.</h4>' );
         $new_xp = $ag->char[ 'xp' ] + $foe[ 'ability' ];
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_XP, $new_xp );
 
         mt_srand();
@@ -165,13 +165,13 @@ then try to engage in combat once more.</p>
             echo( '<h3>Currently Equipped: ' .
                   ag_gear_string( $ag->char[
                       array_search( $gear_slot, $gear_obj ) ] ) );
-            echo( '<h3>(<a href="game-setting.php?setting=equip_gear">' .
+            echo( '<h3>(<a href="game-setting.php?state=equip_gear">' .
                   'Click to discard your old gear and take the new gear' .
                   '</a>)</h3>' );
 
-            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_STORED_GEAR, json_encode( $gear ) );
-            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_STORED_SLOT, $gear_slot );
         }
     }
@@ -295,10 +295,10 @@ function ag_get_attack( $ability, $is_foe ) {
         $obj[ 'message' ] = 'Your foe delivers a crushing strike for ' .
             $obj[ 'damage' ] . ' damage!';
 
-        $old_dmg = character_meta_int(
+        $old_dmg = $ag->c( 'user' )->character_meta_int(
             ag_meta_type_character, AG_MAX_DAMAGE_TAKEN );
         if ( $obj[ 'damage' ] > $old_dmg ) {
-            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_MAX_DAMAGE_TAKEN, $obj[ 'damage' ] );
         }
     } else {
@@ -307,10 +307,10 @@ function ag_get_attack( $ability, $is_foe ) {
         $obj[ 'message' ] = 'You deliver a crushing strike for ' .
             $obj[ 'damage' ] . ' damage!';
 
-        $old_dmg = character_meta_int(
+        $old_dmg = $ag->c( 'user' )->character_meta_int(
             ag_meta_type_character, AG_MAX_DAMAGE_DONE );
         if ( $obj[ 'damage' ] > $old_dmg ) {
-            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_MAX_DAMAGE_DONE, $obj[ 'damage' ] );
         }
     }
@@ -323,12 +323,12 @@ function ag_equip_gear( $args ) {
 
     $gear_obj = ag_get_gear_obj();
 
-    $gear_slot = character_meta( ag_meta_type_character, AG_STORED_SLOT );
+    $gear_slot = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_STORED_SLOT );
 
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        $gear_slot, character_meta( ag_meta_type_character, AG_STORED_GEAR ) );
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $gear_slot, $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_STORED_GEAR ) );
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=profile';
+    $ag->set_redirect_header( GAME_URL . '?state=profile' );
 }
 
 $custom_setting_map[ 'equip_gear' ] = 'ag_equip_gear';

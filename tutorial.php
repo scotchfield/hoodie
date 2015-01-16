@@ -33,7 +33,7 @@ function ag_tutorial_print() {
 <div class="row text-center">
   <h2>It's a cold world out there.</h2>
   <p class="lead">You should grab a hoodie.</p>
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=1">Tell me
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=1">Tell me
       more..</a>)</h2>
 </div>
 <?php
@@ -48,7 +48,7 @@ function ag_tutorial_print() {
 We're all tough, and we can all hold our own in combat.</p>
   <p class="lead"><b>The only thing that makes us stronger in this frozen
 land is our gear.</b></p>
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=2">Say, that
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=2">Say, that
      looks like a comfortable hoodie you've got there..</a>)</h2>
 <?php
         } else if ( ! $ag->c( 'common' )->get_bit( $t, 3 ) ) {
@@ -64,7 +64,7 @@ to get an idea of what you look like. Sure, there's not much to look at now,
 but you'll grow stronger once you manage to find some delicious gear.</p>
   <p class="lead"><b>Your health and attack power improve with better
 gear.</b></p>
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=3">Is that
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=3">Is that
 me? What else can you tell me?</a>)</h2>
 </div>
 
@@ -89,7 +89,7 @@ Click the Combat link in the Map menu, and you'll fight a random baddie.</p>
   <p class="lead">Be careful though. The further you go from home, the more
 difficult your foes will be.</p>
   <p class="lead"><b>Combat is easier when you're closer to (0, 0).</b></p>
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=4">Okay, defeat
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=4">Okay, defeat
 baddies to get gear. Can I go fight some monsters now?</a>)</h2>
 <?php
 
@@ -118,7 +118,7 @@ the rare quality
 up to epic tier stuff like the
 <a class="epic" href="#" onmouseover="popup('<span class=&quot;item_name&quot;>Advising Sword</span><hr><span class=&quot;epic&quot;>Epic Quality</span><br><span>Cautiousness: <b>8</b><br>Appearance: <b>7</b><br></span>')" onmouseout="popout()">Advising Sword</a>,
 all gear is special, and all gear is unique.
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=5">Alright,
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=5">Alright,
 I think I'm picking up what you're putting down.</a>)</h2>
 <?php
         } else if ( ! $ag->c( 'common' )->get_bit( $t, 6 ) ) {
@@ -138,7 +138,7 @@ hoodie to get back on your feet.</p>
   <p class="lead"><b>Your stamina automatically refills over time, but
 replenishes more quickly with better hoodies.</b></p>
 
-  <h2>(<a href="game-setting.php?setting=tutorial&amp;status=6">Okay, I've
+  <h2>(<a href="game-setting.php?state=tutorial&amp;status=6">Okay, I've
 got it! Let me at 'em.</a>)</h2>
 <?php
         } else if ( ! $ag->c( 'common' )->get_bit( $t, 7 ) ) {
@@ -185,4 +185,4 @@ function ag_tutorial_setting( $args ) {
         AG_TUTORIAL, $ag->c( 'common' )->set_bit( $t, $bit ) );
 }
 
-$custom_setting_map[ 'tutorial' ] = 'ag_tutorial_setting';
+$ag->add_state( 'do_setting', 'tutorial', 'ag_tutorial_setting' );
