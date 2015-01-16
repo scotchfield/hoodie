@@ -11,8 +11,8 @@ function ag_tutorial_check() {
         return;
     }
 
-    $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
-    if ( ! get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
+    $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
+    if ( ! $ag->c( 'common' )->get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
         $ag->set_state( 'tutorial' );
     }
 }
@@ -23,9 +23,9 @@ function ag_tutorial_print() {
     global $ag;
 
     if ( ! strcmp( 'tutorial', $ag->get_state() ) ) {
-        $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
+        $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
 
-        if ( ! get_bit( $t, 1 ) ) {
+        if ( ! $ag->c( 'common' )->get_bit( $t, 1 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -37,7 +37,7 @@ function ag_tutorial_print() {
       more..</a>)</h2>
 </div>
 <?php
-        } else if ( ! get_bit( $t, 2 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 2 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -51,7 +51,7 @@ land is our gear.</b></p>
   <h2>(<a href="game-setting.php?setting=tutorial&amp;status=2">Say, that
      looks like a comfortable hoodie you've got there..</a>)</h2>
 <?php
-        } else if ( ! get_bit( $t, 3 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 3 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -72,7 +72,7 @@ me? What else can you tell me?</a>)</h2>
 
             ag_print_character( $ag->char );
 
-        } else if ( ! get_bit( $t, 4 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 4 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -95,7 +95,7 @@ baddies to get gear. Can I go fight some monsters now?</a>)</h2>
 
             ag_draw_map( 0, 0 );
 
-        } else if ( ! get_bit( $t, 5 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 5 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -121,7 +121,7 @@ all gear is special, and all gear is unique.
   <h2>(<a href="game-setting.php?setting=tutorial&amp;status=5">Alright,
 I think I'm picking up what you're putting down.</a>)</h2>
 <?php
-        } else if ( ! get_bit( $t, 6 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 6 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -141,7 +141,7 @@ replenishes more quickly with better hoodies.</b></p>
   <h2>(<a href="game-setting.php?setting=tutorial&amp;status=6">Okay, I've
 got it! Let me at 'em.</a>)</h2>
 <?php
-        } else if ( ! get_bit( $t, 7 ) ) {
+        } else if ( ! $ag->c( 'common' )->get_bit( $t, 7 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -151,14 +151,14 @@ got it! Let me at 'em.</a>)</h2>
   <p class="lead">Best of luck out there, adventurer!</p>
   <h2>(<a href="?state=profile">Take me to my character page!</a>)</h2>
 <?php
-            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_TUTORIAL,
-                set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
+                $ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
         } else {
             /* This is bad!  Clear the tutorial to be safe. */
-            //update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+            //$ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             //    AG_TUTORIAL,
-            //    set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
+            //    $ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
         }
     }
 }
@@ -178,11 +178,11 @@ function ag_tutorial_setting( $args ) {
 
     global $ag;
 
-    $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
-    ensure_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+    $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
+    $ag->c( 'user' )->ensure_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_TUTORIAL );
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_TUTORIAL, set_bit( $t, $bit ) );
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        AG_TUTORIAL, $ag->c( 'common' )->set_bit( $t, $bit ) );
 }
 
 $custom_setting_map[ 'tutorial' ] = 'ag_tutorial_setting';

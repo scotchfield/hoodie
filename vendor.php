@@ -81,14 +81,15 @@ function ag_vendor_buy( $args ) {
         return;
     }
 
-    $x = character_meta( ag_meta_type_character, AG_POS_X );
-    $y = character_meta( ag_meta_type_character, AG_POS_Y );
+    $x = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_X );
+    $y = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_Y );
 
     $obj = ag_get_map_state( $x, $y );
 
     $vendor_gear = ag_get_vendor_gear( $x, $y, $obj[ 'level' ] );
 
-    $gold = character_meta_int( ag_meta_type_character, AG_GOLD );
+    $gold = $ag->c( 'user' )->character_meta_int(
+        ag_meta_type_character, AG_GOLD );
     $cost = intval( $obj[ 'level' ] ) * 1000;
 
     if ( $gold < $cost ) {
@@ -98,12 +99,13 @@ function ag_vendor_buy( $args ) {
     }
 
     $new_gold = $gold - $cost;
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_GOLD, $new_gold );
+    $ag->c( 'user' )->update_character_meta(
+        $ag->char[ 'id' ], ag_meta_type_character, AG_GOLD, $new_gold );
 
     $gear = $vendor_gear[ $id ];
 
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+    $ag->c( 'user' )->update_character_meta(
+        $ag->char[ 'id' ], ag_meta_type_character,
         $gear[ 'slot' ], json_encode( $gear, $assoc = TRUE ) );
 
     $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=character';

@@ -51,6 +51,7 @@ function ag_post_load() {
     global $ag;
 
     $ag->set_component( 'achievement', new ArcadiaAchievement() );
+    $ag->set_component( 'heartbeat', new ArcadiaHeartbeat() );
 }
 
 $ag->add_state( 'post_load', FALSE, 'ag_post_load' );
@@ -88,19 +89,19 @@ function ag_default_state() {
     if ( FALSE == $ag->user ) {
         $ag->set_state( 'title' );
     } else if ( FALSE == $ag->char ) {
-        $ag->char = get_character_by_name( $user[ 'user_name' ] );
+        $ag->char = $ag->c( 'user' )->get_character_by_name( $ag->user[ 'user_name' ] );
 
         if ( FALSE == $ag->char ) {
             $character_id = add_character(
-                $user[ 'id' ], $user[ 'user_name' ] );
+                $ag->user[ 'id' ], $ag->user[ 'user_name' ] );
 
-            $ag->char = get_character_by_name( $user[ 'user_name' ] );
+            $ag->char = $ag->c( 'user' )->get_character_by_name( $ag->user[ 'user_name' ] );
             // @todo: arcadia should do this, not me
         }
 
         $_SESSION[ 'c' ] = $ag->char[ 'id' ];
 
-        do_state( 'select_character' );
+        $ag->do_state( 'select_character' );
 
         header( 'Location: ' . GAME_URL );
         exit;
@@ -209,18 +210,18 @@ function ag_login() {
     $gear_obj = ag_get_gear_obj();
 
     // @todo: should use array_values in ensure calls (or db calls?)
-    ensure_character_meta_keygroup(
+    $ag->c( 'user' )->ensure_character_meta_keygroup(
         $ag->char[ 'id' ], ag_meta_type_character, '',
         array_values( $gear_obj ) );
 
-    ensure_character_meta_keygroup(
+    $ag->c( 'user' )->ensure_character_meta_keygroup(
         $ag->char[ 'id' ], ag_meta_type_character, '',
         array(
             AG_STAMINA, AG_GOLD, AG_XP, AG_STAMINA_TIMESTAMP,
             AG_TIP, AG_STORED_GEAR, AG_STORED_SLOT,
         ) );
 
-    ensure_character_meta_keygroup(
+    $ag->c( 'user' )->ensure_character_meta_keygroup(
         $ag->char[ 'id' ], ag_meta_type_character, 0,
         array(
             AG_POS_X, AG_POS_Y,
@@ -228,20 +229,20 @@ function ag_login() {
             AG_TUTORIAL,
         ) );
 
-    if ( '' == character_meta( ag_meta_type_character, AG_HOODIE ) ) {
-        update_character_meta( $ag->char[ 'id' ],
+    if ( '' == $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_HOODIE ) ) {
+        $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_HOODIE,
             '{"name":"Boring Black Hoodie","stats":{"Hoodie":1} }' );
     }
 
-    if ( '' == character_meta( ag_meta_type_character, AG_CHEST ) ) {
-       update_character_meta( $ag->char[ 'id' ],
+    if ( '' == $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_CHEST ) ) {
+       $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_CHEST,
             '{"name":"Plain Shirt","stats":{"Strength":1} }' );
     }
 
-    if ( '' == character_meta( ag_meta_type_character, AG_LEGS ) ) {
-       update_character_meta( $ag->char[ 'id' ],
+    if ( '' == $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_LEGS ) ) {
+       $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_LEGS,
             '{"name":"Old Jeans","stats":{"Emotion":1} }' );
     }
@@ -293,7 +294,7 @@ function ag_header() {
 
     if ( FALSE != $ag->char ) {
 
-        add_heartbeat();
+        $ag->c( 'heartbeat' )->add_heartbeat();
 
 ?>
         <div class="collapse navbar-collapse">
@@ -489,7 +490,7 @@ function ag_regen_stamina() {
         return;
     }
 
-    $stamina = character_meta_float(
+    $stamina = $ag->c( 'user' )->character_meta_float(
         ag_meta_type_character, AG_STAMINA );
 
     if ( $stamina < 100 ) {
@@ -500,18 +501,20 @@ function ag_regen_stamina() {
             $stamina_boost += ( $hoodie / 100.0 ) ;
         }
 
-        $stamina_seconds = time() - character_meta_int(
+        $stamina_seconds = time() - $ag->c( 'user' )->character_meta_int(
             ag_meta_type_character, AG_STAMINA_TIMESTAMP );
         $stamina_gain = $stamina_boost * ( $stamina_seconds / 120.0 );
 
         $new_stamina = min( 100, $stamina + $stamina_gain );
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+        $ag->c( 'user' )->update_character_meta(
+            $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
         $ag->char[ 'stamina' ] = $new_stamina;
     }
 
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
+    $ag->c( 'user' )->update_character_meta(
+        $ag->char[ 'id' ], ag_meta_type_character,
         AG_STAMINA_TIMESTAMP, time() );
 }
 
@@ -525,12 +528,12 @@ function ag_tip_print() {
         return;
     }
 
-    $tip = character_meta( ag_meta_type_character, AG_TIP );
+    $tip = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TIP );
 
     if ( 0 < strlen( $tip ) ) {
         echo( '<p class="tip">' . $tip . '</p>' );
-        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-            AG_TIP, '' );
+        $ag->c( 'user' )->update_character_meta(
+            $ag->char[ 'id' ], ag_meta_type_character, AG_TIP, '' );
     }
 }
 
@@ -721,8 +724,8 @@ function ag_get_gear( $slot, $level ) {
 function ag_tip( $st ) {
     global $ag;
 
-    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_TIP, $st );
+    $ag->c( 'user' )->update_character_meta(
+        $ag->char[ 'id' ], ag_meta_type_character, AG_TIP, $st );
 }
 
 function ag_st( $st ) {
@@ -767,7 +770,7 @@ function ag_thank_you() {
         return;
     }
 
-    update_character_meta( $ag->char[ 'id' ],
+    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ],
         ag_meta_type_character, AG_HOODIE,
         '{"name":"Epic Red Hoodie","stats":{"Hoodie":100},"rarity":"5"}' );
 ?>
