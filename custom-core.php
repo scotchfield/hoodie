@@ -1,5 +1,7 @@
 <?php
 
+global $ag;
+
 require( GAME_CUSTOM_PATH . 'title.php' );
 
 require( GAME_CUSTOM_PATH . 'character.php' );
@@ -46,12 +48,12 @@ define( 'AG_WRISTS', 112 );
 
 
 function ag_post_load() {
-    global $game;
+    global $ag;
 
-    $game->set_component( 'achievement', new ArcadiaAchievement() );
+    $ag->set_component( 'achievement', new ArcadiaAchievement() );
 }
 
-add_action( 'post_load', 'ag_post_load' );
+$ag->add_state( 'post_load', FALSE, 'ag_post_load' );
 
 
 function ag_get_gear_obj() {
@@ -80,45 +82,44 @@ function ag_get_gear_slot() {
     return $gear_values[ mt_rand( 0, count( $gear_values ) - 1 ) ];
 }
 
-function ag_default_action() {
-    global $user, $character, $game;
+function ag_default_state() {
+    global $ag;
 
-    if ( FALSE == $user ) {
-        $game->set_action( 'title' );
-    } else if ( FALSE == $character ) {
-        $character = get_character_by_name( $user[ 'user_name' ] );
+    if ( FALSE == $ag->user ) {
+        $ag->set_state( 'title' );
+    } else if ( FALSE == $ag->char ) {
+        $ag->char = get_character_by_name( $user[ 'user_name' ] );
 
-        if ( FALSE == $character ) {
+        if ( FALSE == $ag->char ) {
             $character_id = add_character(
                 $user[ 'id' ], $user[ 'user_name' ] );
 
-            $character = get_character_by_name( $user[ 'user_name' ] );
+            $ag->char = get_character_by_name( $user[ 'user_name' ] );
             // @todo: arcadia should do this, not me
         }
 
-        $_SESSION[ 'c' ] = $character[ 'id' ];
-        $GLOBALS[ 'character' ] = $character;
+        $_SESSION[ 'c' ] = $ag->char[ 'id' ];
 
-        do_action( 'select_character' );
+        do_state( 'select_character' );
 
         header( 'Location: ' . GAME_URL );
         exit;
     } else {
-        $game->set_action( 'profile' );
+        $ag->set_state( 'profile' );
     }
 }
 
-add_action( 'set_default_action', 'ag_default_action' );
+$ag->add_state( 'set_default_state', FALSE, 'ag_default_state' );
 
 
 function ag_unpack_character() {
-    global $character;
+    global $ag;
 
-    if ( FALSE == $character ) {
+    if ( FALSE == $ag->char ) {
         return;
     }
 
-    $character = ag_get_unpacked_character( $character );
+    $ag->char = ag_get_unpacked_character( $ag->char );
 }
 
 function ag_meta_int( $char, $key_type, $meta_key ) {
@@ -201,26 +202,26 @@ function ag_get_unpacked_character( $char ) {
 }
 
 function ag_login() {
-    global $character;
+    global $ag;
 
-    log_add( 1, $character[ 'id' ], '' );
+    log_add( 1, $ag->char[ 'id' ], '' );
 
     $gear_obj = ag_get_gear_obj();
 
     // @todo: should use array_values in ensure calls (or db calls?)
     ensure_character_meta_keygroup(
-        $character[ 'id' ], ag_meta_type_character, '',
+        $ag->char[ 'id' ], ag_meta_type_character, '',
         array_values( $gear_obj ) );
 
     ensure_character_meta_keygroup(
-        $character[ 'id' ], ag_meta_type_character, '',
+        $ag->char[ 'id' ], ag_meta_type_character, '',
         array(
             AG_STAMINA, AG_GOLD, AG_XP, AG_STAMINA_TIMESTAMP,
             AG_TIP, AG_STORED_GEAR, AG_STORED_SLOT,
         ) );
 
     ensure_character_meta_keygroup(
-        $character[ 'id' ], ag_meta_type_character, 0,
+        $ag->char[ 'id' ], ag_meta_type_character, 0,
         array(
             AG_POS_X, AG_POS_Y,
             AG_WINS, AG_LOSSES, AG_MAX_DAMAGE_DONE, AG_MAX_DAMAGE_TAKEN,
@@ -228,31 +229,31 @@ function ag_login() {
         ) );
 
     if ( '' == character_meta( ag_meta_type_character, AG_HOODIE ) ) {
-        update_character_meta( $character[ 'id' ],
+        update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_HOODIE,
             '{"name":"Boring Black Hoodie","stats":{"Hoodie":1} }' );
     }
 
     if ( '' == character_meta( ag_meta_type_character, AG_CHEST ) ) {
-       update_character_meta( $character[ 'id' ],
+       update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_CHEST,
             '{"name":"Plain Shirt","stats":{"Strength":1} }' );
     }
 
     if ( '' == character_meta( ag_meta_type_character, AG_LEGS ) ) {
-       update_character_meta( $character[ 'id' ],
+       update_character_meta( $ag->char[ 'id' ],
             ag_meta_type_character, AG_LEGS,
             '{"name":"Old Jeans","stats":{"Emotion":1} }' );
     }
 
 }
 
-add_action( 'select_character', 'ag_login' );
+$ag->add_state( 'select_character', FALSE, 'ag_login' );
 
 function ag_header() {
-    global $user, $character, $game;
+    global $ag;
 
-    if ( ! strcmp( 'title', $game->get_action() ) ) {
+    if ( ! strcmp( 'title', $ag->get_state() ) ) {
         return;
     }
 
@@ -262,7 +263,7 @@ function ag_header() {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo( GAME_NAME ); ?> (<?php echo( $game->get_action() );
+    <title><?php echo( GAME_NAME ); ?> (<?php echo( $ag->get_state() );
         ?>)</title>
     <link rel="stylesheet" href="<?php echo( GAME_CUSTOM_STYLE_URL );
         ?>bootstrap.min.css">
@@ -290,7 +291,7 @@ function ag_header() {
         </div>
 <?php
 
-    if ( FALSE != $character ) {
+    if ( FALSE != $ag->char ) {
 
         add_heartbeat();
 
@@ -301,30 +302,30 @@ function ag_header() {
               <a href="#" class="dropdown-toggle"
                  data-toggle="dropdown">Character <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="?action=profile">Profile</a></li>
-                <li><a href="?action=achievements">Achievements</a></li>
+                <li><a href="?state=profile">Profile</a></li>
+                <li><a href="?state=achievements">Achievements</a></li>
                 <li class="divider">
-                <li><a href="?action=online">Characters Online</a></li>
+                <li><a href="?state=online">Characters Online</a></li>
               </ul>
             </li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle"
                  data-toggle="dropdown">Map <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="?action=map">Current Location</a></li>
+                <li><a href="?state=map">Current Location</a></li>
                 <li class="divider">
-                <li><a href="?action=combat">Combat</a></li>
-                <li><a href="?action=boss">Boss Battles</a></li>
-                <li><a href="?action=vendor">Vendor</a></li>
+                <li><a href="?state=combat">Combat</a></li>
+                <li><a href="?state=boss">Boss Battles</a></li>
+                <li><a href="?state=vendor">Vendor</a></li>
               </ul>
             </li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle"
                  data-toggle="dropdown">About <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="?action=about">About Hoodiequest</a></li>
+                <li><a href="?state=about">About Hoodiequest</a></li>
                 <li class="divider">
-                <li><a href="?action=upgrade">Upgrade Hoodie</a></li>
+                <li><a href="?state=upgrade">Upgrade Hoodie</a></li>
               </ul>
             </li>
           </ul>
@@ -343,9 +344,9 @@ function ag_header() {
 }
 
 function ag_footer() {
-    global $character, $game;
+    global $ag;
 
-    if ( ! strcmp( 'title', $game->get_action() ) ) {
+    if ( ! strcmp( 'title', $ag->get_state() ) ) {
         return;
     }
 
@@ -363,15 +364,15 @@ function ag_footer() {
 <?php
 }
 
-add_action( 'game_header', 'ag_header' );
-add_action( 'game_footer', 'ag_footer' );
+$ag->add_state( 'game_header', FALSE, 'ag_header' );
+$ag->add_state( 'game_footer', FALSE, 'ag_footer' );
 
 
 
 function ag_about() {
-    global $game;
+    global $ag;
 
-    if ( strcmp( 'about', $game->get_action() ) ) {
+    if ( strcmp( 'about', $ag->get_state() ) ) {
        return;
     }
 
@@ -389,7 +390,7 @@ function ag_about() {
 <a href="http://oryxdesignlab.com/">Oryx Design Lab</a>. Go buy sprite packs
 and make stuff!
   <h2>Why?</h2>
-  <p>I was inspired by a hoodie! Check <a href="?action=upgrade">this
+  <p>I was inspired by a hoodie! Check <a href="?state=upgrade">this
 other page</a> for the story.
   <h2>What's up with the name?</h2>
   <p>The game was called Hoodiecraft for a couple of weeks, because I
@@ -401,9 +402,9 @@ Watch for the sequel, World of Hoodiequest, coming April 5th, 1993!</p>
 }
 
 function ag_upgrade() {
-    global $game;
+    global $ag;
 
-    if ( strcmp( 'upgrade', $game->get_action() ) ) {
+    if ( strcmp( 'upgrade', $ag->get_state() ) ) {
        return;
     }
 
@@ -472,19 +473,19 @@ or pet a cat. Do something nice, and have a wonderful day!</p>
 </div>
 <div class="row text-right" style="padding-top:16px;">
   <p>(and if you just want the hoodie without paying the buck, just
-  <a href="<?php echo( GAME_URL ); ?>?action=thank_you">click here</a>!)</p>
+  <a href="<?php echo( GAME_URL ); ?>?state=thank_you">click here</a>!)</p>
 </div>
 <?php
 }
 
-add_action( 'do_page_content', 'ag_about' );
-add_action( 'do_page_content', 'ag_upgrade' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_about' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_upgrade' );
 
 
 function ag_regen_stamina() {
-    global $character;
+    global $ag;
 
-    if ( FALSE == $character ) {
+    if ( FALSE == $ag->char ) {
         return;
     }
 
@@ -493,8 +494,8 @@ function ag_regen_stamina() {
 
     if ( $stamina < 100 ) {
         $stamina_boost = 1.0;
-        if ( isset( $character[ 'stats' ][ 'Hoodie' ] ) ) {
-            $hoodie = intval( $character[ 'stats' ][ 'Hoodie' ] );
+        if ( isset( $ag->char[ 'stats' ][ 'Hoodie' ] ) ) {
+            $hoodie = intval( $ag->char[ 'stats' ][ 'Hoodie' ] );
             $hoodie = max( 0, min( 100, $hoodie ) );
             $stamina_boost += ( $hoodie / 100.0 ) ;
         }
@@ -504,23 +505,23 @@ function ag_regen_stamina() {
         $stamina_gain = $stamina_boost * ( $stamina_seconds / 120.0 );
 
         $new_stamina = min( 100, $stamina + $stamina_gain );
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
-        $character[ 'stamina' ] = $new_stamina;
+        $ag->char[ 'stamina' ] = $new_stamina;
     }
 
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_STAMINA_TIMESTAMP, time() );
 }
 
-add_action( 'character_load', 'ag_unpack_character' );
-add_action( 'character_load', 'ag_regen_stamina' );
+$ag->add_state( 'character_load', FALSE, 'ag_unpack_character' );
+$ag->add_state( 'character_load', FALSE, 'ag_regen_stamina' );
 
 function ag_tip_print() {
-    global $character;
+    global $ag;
 
-    if ( FALSE == $character ) {
+    if ( FALSE == $ag->char ) {
         return;
     }
 
@@ -528,12 +529,12 @@ function ag_tip_print() {
 
     if ( 0 < strlen( $tip ) ) {
         echo( '<p class="tip">' . $tip . '</p>' );
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_TIP, '' );
     }
 }
 
-add_action_priority( 'do_page_content', 'ag_tip_print' );
+$ag->add_state_priority( 'do_page_content', FALSE, 'ag_tip_print' );
 
 function ag_gear_string( $item ) {
     if ( '' == $item ) {
@@ -589,7 +590,7 @@ function ag_validate_user( $args ) {
     set_user_max_characters( $args[ 'user_id' ], 1 );
 }
 
-add_action( 'validate_user', 'ag_validate_user' );
+$ag->add_state( 'validate_user', FALSE, 'ag_validate_user' );
 
 function ag_get_gear( $slot, $level ) {
     $rare_rand = mt_rand( 1, 100 );
@@ -718,9 +719,9 @@ function ag_get_gear( $slot, $level ) {
 }
 
 function ag_tip( $st ) {
-    global $character;
+    global $ag;
 
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_TIP, $st );
 }
 
@@ -734,13 +735,13 @@ function ag_xy_seed( $x, $y ) {
 }
 
 function ag_achievement_print( $args ) {
-    global $character;
+    global $ag;
 
     if ( ! isset( $args[ 'achievement_id' ] ) ) {
         return;
     }
 
-    $achievement = $game->c( 'achievement' )->get_achievement(
+    $achievement = $ag->c( 'achievement' )->get_achievement(
         $args[ 'achievement_id' ] );
     $meta = json_decode( $achievement[ 'meta_value' ], TRUE );
 ?>
@@ -752,21 +753,21 @@ function ag_achievement_print( $args ) {
 <?php
 }
 
-add_action( 'award_achievement', 'ag_achievement_print' );
+$ag->add_state( 'award_achievement', FALSE, 'ag_achievement_print' );
 
 
 function ag_thank_you() {
-    global $character, $game;
+    global $ag;
 
-    if ( strcmp( 'thank_you', $game->get_action() ) ) {
+    if ( strcmp( 'thank_you', $ag->get_state() ) ) {
         return;
     }
 
-    if ( FALSE == $character ) {
+    if ( FALSE == $ag->char ) {
         return;
     }
 
-    update_character_meta( $character[ 'id' ],
+    update_character_meta( $ag->char[ 'id' ],
         ag_meta_type_character, AG_HOODIE,
         '{"name":"Epic Red Hoodie","stats":{"Hoodie":100},"rarity":"5"}' );
 ?>
@@ -785,12 +786,12 @@ Github, if that's your sort of thing, and enjoy the rest of the game!</p>
 <?php
 }
 
-add_action( 'do_page_content', 'ag_thank_you' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_thank_you' );
 
 function ag_online() {
-    global $game;
+    global $ag;
 
-    if ( strcmp( 'online', $game->get_action() ) ) {
+    if ( strcmp( 'online', $ag->get_state() ) ) {
         return;
     }
 
@@ -802,7 +803,7 @@ function ag_online() {
 <div class="row text-center">
 <?php
     foreach ( $char_obj as $char ) {
-        echo( '<h3><a href="?action=char&id=' . $char[ 'id' ] .
+        echo( '<h3><a href="?state=char&id=' . $char[ 'id' ] .
               '">' . $char[ 'character_name' ] . '</a></h3>' );
     }
 ?>
@@ -810,4 +811,4 @@ function ag_online() {
 <?php
 }
 
-add_action( 'do_page_content', 'ag_online' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_online' );

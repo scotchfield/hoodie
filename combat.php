@@ -1,9 +1,11 @@
 <?php
 
-function ag_combat_content() {
-    global $game;
+global $ag;
 
-    if ( strcmp( 'combat', $game->get_action() ) ) {
+function ag_combat_content() {
+    global $ag;
+
+    if ( strcmp( 'combat', $ag->get_state() ) ) {
        return;
     }
 
@@ -17,13 +19,13 @@ function ag_combat_content() {
 
 ?>
 <div class="row text-center">
-  <h2>(<a href="?action=combat">Click to battle a new foe</a>)</h2>
+  <h2>(<a href="?state=combat">Click to battle a new foe</a>)</h2>
 </div>
 <?php
 }
 
 function ag_do_combat( $map_obj = FALSE, $foe = FALSE ) {
-    global $character;
+    global $ag;
 
     $gear_obj = ag_get_gear_obj();
 
@@ -41,7 +43,7 @@ then try to engage in combat once more.</p>
     }
 
     if ( FALSE == $map_obj ) {
-        $map_obj = ag_get_map_state( $character[ 'x' ], $character[ 'y' ] );
+        $map_obj = ag_get_map_state( $ag->char[ 'x' ], $ag->char[ 'y' ] );
     }
 
     if ( FALSE == $foe ) {
@@ -56,16 +58,16 @@ then try to engage in combat once more.</p>
     $round = 0;
 
     $player_turn = TRUE;
-    $abil_all = $character[ 'ability' ] + $foe[ 'ability' ];
-    if ( mt_rand( 1, $abil_all ) > $character[ 'ability' ] ) {
+    $abil_all = $ag->char[ 'ability' ] + $foe[ 'ability' ];
+    if ( mt_rand( 1, $abil_all ) > $ag->char[ 'ability' ] ) {
         $player_turn = FALSE;
     }
 
-    $health_char = $character[ 'health' ];
+    $health_char = $ag->char[ 'health' ];
     $health_foe = $foe[ 'health' ];
 
     if ( ! $player_turn ) {
-        ag_echo_health( $character, $foe, $health_char, $health_foe );
+        ag_echo_health( $ag->char, $foe, $health_char, $health_foe );
     }
 
     while ( $combat ) {
@@ -73,9 +75,9 @@ then try to engage in combat once more.</p>
         $round += 1;
 
         if ( $player_turn ) {
-            $attack = ag_get_attack( $character[ 'ability' ], FALSE );
+            $attack = ag_get_attack( $ag->char[ 'ability' ], FALSE );
 
-            ag_echo_health( $character, $foe, $health_char, $health_foe );
+            ag_echo_health( $ag->char, $foe, $health_char, $health_foe );
 
             echo( '<p class="attack">' . $attack[ 'message' ] . '</p>' );
 
@@ -106,12 +108,12 @@ then try to engage in combat once more.</p>
               'back to a safe spot and heal.</p>' );
 
         $new_stamina = max( 0, $stamina - 10.0 );
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
         $new_losses = character_meta_int(
             ag_meta_type_character, AG_LOSSES ) + 1;
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_LOSSES, $new_losses );
     } else if ( $health_foe <= 0 ) {
         echo( '<div class="row text-center">' );
@@ -119,32 +121,32 @@ then try to engage in combat once more.</p>
 
         if ( isset( $foe[ 'boss_id' ] ) ) {
             if ( 1 == $foe[ 'boss_id' ] ) {
-                $game->c( 'achievement' )->award_achievement( 1 );
+                $ag->c( 'achievement' )->award_achievement( 1 );
             } else if ( 2 == $foe[ 'boss_id' ] ) {
-                $game->c( 'achievement' )->award_achievement( 2 );
+                $ag->c( 'achievement' )->award_achievement( 2 );
             } else if ( 3 == $foe[ 'boss_id' ] ) {
-                $game->c( 'achievement' )->award_achievement( 3 );
+                $ag->c( 'achievement' )->award_achievement( 3 );
             }
         }
 
         $new_stamina = $stamina - 1.0;
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_STAMINA, $new_stamina );
 
         $new_wins = character_meta_int(
             ag_meta_type_character, AG_WINS ) + 1;
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_WINS, $new_wins );
 
         echo( '<h4>You gain ' . $foe[ 'gold' ] . ' gold.</h4>' );
-        $new_gold = $character[ 'gold' ] + $foe[ 'gold' ];
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        $new_gold = $ag->char[ 'gold' ] + $foe[ 'gold' ];
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_GOLD, $new_gold );
 
         echo( '<h4>You gain ' . $foe[ 'ability' ] .
               ' experience.</h4>' );
-        $new_xp = $character[ 'xp' ] + $foe[ 'ability' ];
-        update_character_meta( $character[ 'id' ], ag_meta_type_character,
+        $new_xp = $ag->char[ 'xp' ] + $foe[ 'ability' ];
+        update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             AG_XP, $new_xp );
 
         mt_srand();
@@ -161,15 +163,15 @@ then try to engage in combat once more.</p>
 
             echo( '<h3>Available Gear: ' . ag_gear_string( $gear ) . '</h3>' );
             echo( '<h3>Currently Equipped: ' .
-                  ag_gear_string( $character[
+                  ag_gear_string( $ag->char[
                       array_search( $gear_slot, $gear_obj ) ] ) );
             echo( '<h3>(<a href="game-setting.php?setting=equip_gear">' .
                   'Click to discard your old gear and take the new gear' .
                   '</a>)</h3>' );
 
-            update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_STORED_GEAR, json_encode( $gear ) );
-            update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_STORED_SLOT, $gear_slot );
         }
     }
@@ -178,7 +180,7 @@ then try to engage in combat once more.</p>
 <?php
 }
 
-add_action( 'do_page_content', 'ag_combat_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_combat_content' );
 
 function ag_echo_health( $character, $foe, $health_char, $health_foe ) {
 ?>
@@ -283,7 +285,7 @@ function ag_get_boss( $id ) {
 }
 
 function ag_get_attack( $ability, $is_foe ) {
-    global $character;
+    global $ag;
 
     $obj = array();
 
@@ -296,7 +298,7 @@ function ag_get_attack( $ability, $is_foe ) {
         $old_dmg = character_meta_int(
             ag_meta_type_character, AG_MAX_DAMAGE_TAKEN );
         if ( $obj[ 'damage' ] > $old_dmg ) {
-            update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_MAX_DAMAGE_TAKEN, $obj[ 'damage' ] );
         }
     } else {
@@ -308,7 +310,7 @@ function ag_get_attack( $ability, $is_foe ) {
         $old_dmg = character_meta_int(
             ag_meta_type_character, AG_MAX_DAMAGE_DONE );
         if ( $obj[ 'damage' ] > $old_dmg ) {
-            update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_MAX_DAMAGE_DONE, $obj[ 'damage' ] );
         }
     }
@@ -317,25 +319,25 @@ function ag_get_attack( $ability, $is_foe ) {
 }
 
 function ag_equip_gear( $args ) {
-    global $character;
+    global $ag;
 
     $gear_obj = ag_get_gear_obj();
 
     $gear_slot = character_meta( ag_meta_type_character, AG_STORED_SLOT );
 
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         $gear_slot, character_meta( ag_meta_type_character, AG_STORED_GEAR ) );
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?action=profile';
+    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=profile';
 }
 
 $custom_setting_map[ 'equip_gear' ] = 'ag_equip_gear';
 
 
 function ag_boss_content() {
-    global $character, $game;
+    global $ag;
 
-    if ( strcmp( 'boss', $game->get_action() ) ) {
+    if ( strcmp( 'boss', $ag->get_state() ) ) {
        return;
     }
 ?>
@@ -360,13 +362,13 @@ function ag_boss_content() {
 ?>
 <div class="row text-center">
   <h2>Which boss do you dare to challenge?</h2>
-  <h3><a href="?action=boss&id=1">Boss 1</a></h3>
-  <h3><a href="?action=boss&id=2">Boss 2</a></h3>
-  <h3><a href="?action=boss&id=3">Boss 3</a></h3>
+  <h3><a href="?state=boss&id=1">Boss 1</a></h3>
+  <h3><a href="?state=boss&id=2">Boss 2</a></h3>
+  <h3><a href="?state=boss&id=3">Boss 3</a></h3>
 </div>
 <?php
     }
 }
 
-add_action( 'do_page_content', 'ag_boss_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_boss_content' );
 

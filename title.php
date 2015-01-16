@@ -1,13 +1,15 @@
 <?php
 
-function ag_title_content() {
-    global $character, $game;
+global $ag;
 
-    if ( strcmp( 'title', $game->get_action() ) ) {
+function ag_title_content() {
+    global $ag;
+
+    if ( strcmp( 'title', $ag->get_state() ) ) {
         return;
     }
 
-    if ( FALSE != $character ) {
+    if ( FALSE != $ag->char ) {
         header( 'Location: game-logout.php' );
         exit;
     }
@@ -59,7 +61,7 @@ function ag_title_content() {
         <div class="text-right">
           <button type="submit" class="btn btn-sm btn-default">Log in!</button>
         </div>
-        <input type="hidden" name="action" value="login">
+        <input type="hidden" name="state" value="login">
       </form>
 
     </div>
@@ -151,7 +153,7 @@ be the adventurer to find it?</p>
           <button type="submit"
                   class="btn btn-sm btn-default">Register</button>
         </div>
-        <input type="hidden" name="action" value="register">
+        <input type="hidden" name="state" value="register">
       </form>
 
     </div>
@@ -181,4 +183,4 @@ the <a href="https://github.com/scotchfield/arcadia">Arcadia open-source web gam
 <?php
 }
 
-add_action( 'do_page_content', 'ag_title_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_title_content' );

@@ -1,26 +1,28 @@
 <?php
 
+global $ag;
+
 define( 'TUTORIAL_BIT_COMPLETE', 0 );
 
 function ag_tutorial_check() {
-    global $character, $game;
+    global $ag;
 
-    if ( FALSE == $character ) {
+    if ( FALSE == $ag->char ) {
         return;
     }
 
     $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
     if ( ! get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
-        $game->set_action( 'tutorial' );
+        $ag->set_state( 'tutorial' );
     }
 }
 
-add_action( 'action_set', 'ag_tutorial_check' );
+$ag->add_state( 'state_set', FALSE, 'ag_tutorial_check' );
 
 function ag_tutorial_print() {
-    global $character, $game;
+    global $ag;
 
-    if ( ! strcmp( 'tutorial', $game->get_action() ) ) {
+    if ( ! strcmp( 'tutorial', $ag->get_state() ) ) {
         $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
 
         if ( ! get_bit( $t, 1 ) ) {
@@ -68,7 +70,7 @@ me? What else can you tell me?</a>)</h2>
 
 <?php
 
-            ag_print_character( $character );
+            ag_print_character( $ag->char );
 
         } else if ( ! get_bit( $t, 4 ) ) {
 ?>
@@ -147,21 +149,21 @@ got it! Let me at 'em.</a>)</h2>
 <div class="row text-center">
   <h2>Alright, get out there!</h2>
   <p class="lead">Best of luck out there, adventurer!</p>
-  <h2>(<a href="?action=profile">Take me to my character page!</a>)</h2>
+  <h2>(<a href="?state=profile">Take me to my character page!</a>)</h2>
 <?php
-            update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
                 AG_TUTORIAL,
                 set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
         } else {
             /* This is bad!  Clear the tutorial to be safe. */
-            //update_character_meta( $character[ 'id' ], ag_meta_type_character,
+            //update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
             //    AG_TUTORIAL,
             //    set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
         }
     }
 }
 
-add_action( 'do_page_content', 'ag_tutorial_print' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_tutorial_print' );
 
 
 function ag_tutorial_setting( $args ) {
@@ -174,12 +176,12 @@ function ag_tutorial_setting( $args ) {
         return;
     }
 
-    global $character;
+    global $ag;
 
     $t = character_meta( ag_meta_type_character, AG_TUTORIAL );
-    ensure_character_meta( $character[ 'id' ], ag_meta_type_character,
+    ensure_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_TUTORIAL );
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_TUTORIAL, set_bit( $t, $bit ) );
 }
 

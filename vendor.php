@@ -1,11 +1,13 @@
 <?php
 
+global $ag;
+
 define( 'AG_VENDOR_GEAR_MAX', 3 );
 
 function ag_vendor_content() {
-    global $character, $game;
+    global $ag;
 
-    if ( strcmp( 'vendor', $game->get_action() ) ) {
+    if ( strcmp( 'vendor', $ag->get_state() ) ) {
        return;
     }
 ?>
@@ -15,9 +17,9 @@ function ag_vendor_content() {
 </div>
 
 <?php
-    $obj = ag_get_map_state( $character[ 'x' ], $character[ 'y' ] );
+    $obj = ag_get_map_state( $ag->char[ 'x' ], $ag->char[ 'y' ] );
 
-    $vendor_gear = ag_get_vendor_gear( $character[ 'x' ], $character[ 'y' ],
+    $vendor_gear = ag_get_vendor_gear( $ag->char[ 'x' ], $ag->char[ 'y' ],
         $obj[ 'level' ] );
 
 ?>
@@ -27,7 +29,7 @@ function ag_vendor_content() {
 
 <?php
 
-    ag_xy_seed( $character[ 'x' ], $character[ 'y' ] );
+    ag_xy_seed( $ag->char[ 'x' ], $ag->char[ 'y' ] );
 
     $gear_i = 0;
     foreach ( $vendor_gear as $gear ) {
@@ -44,7 +46,7 @@ function ag_vendor_content() {
 
 }
 
-add_action( 'do_page_content', 'ag_vendor_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_vendor_content' );
 
 
 
@@ -65,9 +67,9 @@ function ag_get_vendor_gear( $x, $y, $level ) {
 
 
 function ag_vendor_buy( $args ) {
-    global $character;
+    global $ag;
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?action=vendor';
+    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=vendor';
 
     if ( ! isset( $args[ 'id' ] ) ) {
         return;
@@ -96,15 +98,15 @@ function ag_vendor_buy( $args ) {
     }
 
     $new_gold = $gold - $cost;
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         AG_GOLD, $new_gold );
 
     $gear = $vendor_gear[ $id ];
 
-    update_character_meta( $character[ 'id' ], ag_meta_type_character,
+    update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
         $gear[ 'slot' ], json_encode( $gear, $assoc = TRUE ) );
 
-    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?action=character';
+    $GLOBALS[ 'redirect_header' ] = GAME_URL . '?state=character';
 
     ag_tip( 'You purchase the ' . ag_gear_string( $gear ) . ' for ' .
             $cost . ' gold.' );

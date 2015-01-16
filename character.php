@@ -1,9 +1,11 @@
 <?php
 
-function ag_profile_content() {
-    global $character, $game;
+global $ag;
 
-    if ( strcmp( 'profile', $game->get_action() ) ) {
+function ag_profile_content() {
+    global $ag;
+
+    if ( strcmp( 'profile', $ag->get_state() ) ) {
        return;
     }
 
@@ -12,44 +14,44 @@ function ag_profile_content() {
   <h1 class="page_section">Profile</h1>
 </div>
 <?php
-    if ( $character[ 'ability' ] >= 10 ) {
-        $game->c( 'achievement' )->award_achievement( 100 );
+    if ( $ag->char[ 'ability' ] >= 10 ) {
+        $ag->c( 'achievement' )->award_achievement( 100 );
     }
-    if ( $character[ 'ability' ] >= 25 ) {
-        $game->c( 'achievement' )->award_achievement( 101 );
+    if ( $ag->char[ 'ability' ] >= 25 ) {
+        $ag->c( 'achievement' )->award_achievement( 101 );
     }
-    if ( $character[ 'ability' ] >= 50 ) {
-        $game->c( 'achievement' )->award_achievement( 102 );
+    if ( $ag->char[ 'ability' ] >= 50 ) {
+        $ag->c( 'achievement' )->award_achievement( 102 );
     }
-    if ( $character[ 'ability' ] >= 100 ) {
-        $game->c( 'achievement' )->award_achievement( 103 );
+    if ( $ag->char[ 'ability' ] >= 100 ) {
+        $ag->c( 'achievement' )->award_achievement( 103 );
     }
-    if ( $character[ 'ability' ] >= 250 ) {
-        $game->c( 'achievement' )->award_achievement( 104 );
+    if ( $ag->char[ 'ability' ] >= 250 ) {
+        $ag->c( 'achievement' )->award_achievement( 104 );
     }
-    if ( $character[ 'ability' ] >= 500 ) {
-        $game->c( 'achievement' )->award_achievement( 105 );
+    if ( $ag->char[ 'ability' ] >= 500 ) {
+        $ag->c( 'achievement' )->award_achievement( 105 );
     }
-    if ( $character[ 'ability' ] >= 1000 ) {
-        $game->c( 'achievement' )->award_achievement( 106 );
+    if ( $ag->char[ 'ability' ] >= 1000 ) {
+        $ag->c( 'achievement' )->award_achievement( 106 );
     }
 
-    ag_print_character( $character );
+    ag_print_character( $ag->char );
 ?>
 </div>
 <div class="row text-center">
-<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo( GAME_URL ); ?>?action=char&id=<?php echo( $character[ 'id' ] ); ?>" data-text="I'm on a quest for the warmest hoodie." data-size="large" data-count="none" data-hashtags="hoodiequest">Tweet</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo( GAME_URL ); ?>?action=char&id=<?php echo( $ag->char[ 'id' ] ); ?>" data-text="I'm on a quest for the warmest hoodie." data-size="large" data-count="none" data-hashtags="hoodiequest">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 <?php
 }
 
-add_action( 'do_page_content', 'ag_profile_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_profile_content' );
 
 function ag_char_content() {
-    global $game;
+    global $ag;
 
-    if ( strcmp( 'char', $game->get_action() ) ) {
+    if ( strcmp( 'char', $ag->get_state() ) ) {
        return;
     }
 
@@ -77,7 +79,7 @@ function ag_char_content() {
     ag_print_character( $char );
 }
 
-add_action( 'do_page_content', 'ag_char_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_char_content' );
 
 
 function ag_print_character( $character ) {
@@ -173,9 +175,9 @@ function ag_sort_stats_cmp( $a, $b ) {
 }
 
 function ag_achievements_content() {
-    global $character, $game;
+    global $ag;
 
-    if ( strcmp( 'achievements', $game->get_action() ) ) {
+    if ( strcmp( 'achievements', $ag->get_state() ) ) {
        return;
     }
 
@@ -187,16 +189,16 @@ function ag_achievements_content() {
   <div class="col-md-6">
     <h3>Your achievements</h3>
 <?php
-    if ( ( ! isset( $character[ 'meta' ][
-                        $game->c( 'achievement' )->get_flag_game_meta() ] ) ) ||
+    if ( ( ! isset( $ag->char[ 'meta' ][
+                        $ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ||
          ( 0 == count(
-                    $character[ 'meta' ][
-                        $game->c( 'achievement' )->get_flag_game_meta() ] ) ) ) {
+                    $ag->char[ 'meta' ][
+                        $ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ) {
         echo( '<h4>None yet!</h4>' );
     } else {
         echo( '<dl class="dl-horizontal">' );
-        $achieve_obj = $game->c( 'achievement' )->get_achievements(
-            $character[ 'id' ] );
+        $achieve_obj = $ag->c( 'achievement' )->get_achievements(
+            $ag->char[ 'id' ] );
 
         foreach ( $achieve_obj as $achieve ) {
             $meta = json_decode( $achieve[ 'meta_value' ], TRUE );
@@ -213,11 +215,11 @@ function ag_achievements_content() {
     <h3>Achievements Remaining</h3>
     <dl class="dl-horizontal">
 <?php
-    $achieve_obj = $game->c( 'achievement' )->get_all_achievements();
+    $achieve_obj = $ag->c( 'achievement' )->get_all_achievements();
 
     foreach ( $achieve_obj as $k => $achieve ) {
-        if ( isset( $character[ 'meta' ][
-                        $game->c( 'achievement' )->get_flag_game_meta() ][
+        if ( isset( $ag->char[ 'meta' ][
+                        $ag->c( 'achievement' )->get_flag_game_meta() ][
                         $k ] ) ) {
             continue;
         }
@@ -232,4 +234,4 @@ function ag_achievements_content() {
 <?php
 }
 
-add_action( 'do_page_content', 'ag_achievements_content' );
+$ag->add_state( 'do_page_content', FALSE, 'ag_achievements_content' );
