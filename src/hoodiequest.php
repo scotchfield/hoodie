@@ -38,6 +38,7 @@ define( 'AG_WRISTS', 112 );
 
 
 class Hoodiequest {
+
     public $ag;
 
     public function __construct( $ag ) {
@@ -67,6 +68,7 @@ class Hoodiequest {
         $ag->set_component( 'heartbeat', new ArcadiaHeartbeat() );
 
         $ag->set_component( 'hq_character', new HQCharacter( $ag ) );
+        $ag->set_component( 'hq_combat', new HQCombat( $ag ) );
 
         $this->ag = $ag;
     }

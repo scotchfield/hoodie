@@ -1,6 +1,7 @@
 <?php
 
 class HQCharacter {
+
     public $ag;
 
     public function __construct( $ag ) {
@@ -10,7 +11,6 @@ class HQCharacter {
 
         $this->ag = $ag;
     }
-
 
     public function profile_content() {
         if ( strcmp( 'profile', $this->ag->get_state() ) ) {
