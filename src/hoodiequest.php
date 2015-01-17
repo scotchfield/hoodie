@@ -69,6 +69,7 @@ class Hoodiequest {
 
         $ag->set_component( 'hq_character', new HQCharacter( $ag ) );
         $ag->set_component( 'hq_combat', new HQCombat( $ag ) );
+        $ag->set_component( 'hq_map', new HQMap( $ag ) );
 
         $this->ag = $ag;
     }
