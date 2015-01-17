@@ -70,6 +70,9 @@ class Hoodiequest {
         $ag->set_component( 'hq_character', new HQCharacter( $ag ) );
         $ag->set_component( 'hq_combat', new HQCombat( $ag ) );
         $ag->set_component( 'hq_map', new HQMap( $ag ) );
+        $ag->set_component( 'hq_title', new HQTitle( $ag ) );
+        $ag->set_component( 'hq_tutorial', new HQTutorial( $ag ) );
+        $ag->set_component( 'hq_vendor', new HQVendor( $ag ) );
 
         $this->ag = $ag;
     }

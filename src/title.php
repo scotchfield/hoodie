@@ -1,18 +1,21 @@
 <?php
 
-global $ag;
+class HQTitle {
 
-function ag_title_content() {
-    global $ag;
+    public $ag;
 
-    if ( strcmp( 'title', $ag->get_state() ) ) {
-        return;
+    public function __construct( $ag ) {
+        $ag->add_state( 'do_page_content', 'title',
+            array( $this, 'title_content' ) );
+
+        $this->ag = $ag;
     }
 
-    if ( FALSE != $ag->char ) {
-        header( 'Location: game-logout.php' );
-        exit;
-    }
+    public function title_content() {
+        if ( FALSE != $this->ag->char ) {
+            header( 'Location: game-logout.php' );
+            exit;
+        }
 
 ?>
 <!DOCTYPE html>
@@ -68,25 +71,25 @@ function ag_title_content() {
   </div>
 
 <?php
-$err_obj = array(
-    1 => 'Please provide a username.',
-    2 => 'Please provide a password.',
-    3 => 'Please provide a valid email address.',
-    4 => 'That username already exists.',
-    5 => 'That email address is already in use.',
-    6 => 'That username and password combination does not exist.',
-    100 => 'Thanks! Please check your email for a validation link.',
-    101 => 'That account is already validated!',
-    102 => 'Success! You can now log in.',
-);
+    $err_obj = array(
+        1 => 'Please provide a username.',
+        2 => 'Please provide a password.',
+        3 => 'Please provide a valid email address.',
+        4 => 'That username already exists.',
+        5 => 'That email address is already in use.',
+        6 => 'That username and password combination does not exist.',
+        100 => 'Thanks! Please check your email for a validation link.',
+        101 => 'That account is already validated!',
+        102 => 'Success! You can now log in.',
+    );
 
-if ( isset( $_GET[ 'notify' ] ) ) {
-    $notify = intval( $_GET[ 'notify' ] );
-    if ( isset( $err_obj[ $notify ] ) ) {
-        echo( '<div class="row text-center alert"><h2>' .
-              $err_obj[ $notify ] . '</h2></div>' );
+    if ( isset( $_GET[ 'notify' ] ) ) {
+        $notify = intval( $_GET[ 'notify' ] );
+        if ( isset( $err_obj[ $notify ] ) ) {
+            echo( '<div class="row text-center alert"><h2>' .
+                  $err_obj[ $notify ] . '</h2></div>' );
+        }
     }
-}
 ?>
 
   <div class="row text-center">
@@ -181,6 +184,6 @@ the <a href="https://github.com/scotchfield/arcadia">Arcadia open-source web gam
 </html>
 
 <?php
-}
+    }
 
-$ag->add_state( 'do_page_content', FALSE, 'ag_title_content' );
+}

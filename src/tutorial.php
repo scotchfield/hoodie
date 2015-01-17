@@ -1,31 +1,38 @@
 <?php
 
-global $ag;
-
 define( 'TUTORIAL_BIT_COMPLETE', 0 );
 
-function ag_tutorial_check() {
-    global $ag;
+class HQTutorial {
 
-    if ( FALSE == $ag->char ) {
-        return;
+    public $ag;
+
+    public function __construct( $ag ) {
+        $ag->add_state( 'state_set', FALSE,
+            array( $this, 'tutorial_check' ) );
+        $ag->add_state( 'do_page_content', FALSE,
+            array( $this, 'tutorial_print' ) );
+        $ag->add_state( 'do_setting', 'tutorial',
+            array( $this, 'tutorial_setting' ) );
+
+        $this->ag = $ag;
     }
 
-    $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
-    if ( ! $ag->c( 'common' )->get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
-        $ag->set_state( 'tutorial' );
+    public function tutorial_check() {
+        if ( FALSE == $this->ag->char ) {
+            return;
+        }
+
+        $t = $this->ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
+        if ( ! $this->ag->c( 'common' )->get_bit( $t, TUTORIAL_BIT_COMPLETE ) ) {
+            $this->ag->set_state( 'tutorial' );
+        }
     }
-}
 
-$ag->add_state( 'state_set', FALSE, 'ag_tutorial_check' );
+    public function tutorial_print() {
+        if ( ! strcmp( 'tutorial', $this->ag->get_state() ) ) {
+            $t = $this->ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
 
-function ag_tutorial_print() {
-    global $ag;
-
-    if ( ! strcmp( 'tutorial', $ag->get_state() ) ) {
-        $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
-
-        if ( ! $ag->c( 'common' )->get_bit( $t, 1 ) ) {
+            if ( ! $this->ag->c( 'common' )->get_bit( $t, 1 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -37,7 +44,7 @@ function ag_tutorial_print() {
       more..</a>)</h2>
 </div>
 <?php
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 2 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 2 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -51,7 +58,7 @@ land is our gear.</b></p>
   <h2>(<a href="game-setting.php?state=tutorial&amp;status=2">Say, that
      looks like a comfortable hoodie you've got there..</a>)</h2>
 <?php
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 3 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 3 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -67,12 +74,11 @@ gear.</b></p>
   <h2>(<a href="game-setting.php?state=tutorial&amp;status=3">Is that
 me? What else can you tell me?</a>)</h2>
 </div>
-
 <?php
 
-            ag_print_character( $ag->char );
+                $this->ag->c( 'hq_character' )->print_character( $this->ag->char );
 
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 4 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 4 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -93,9 +99,9 @@ difficult your foes will be.</p>
 baddies to get gear. Can I go fight some monsters now?</a>)</h2>
 <?php
 
-            ag_draw_map( 0, 0 );
+                $this->ag->c( 'hq_map' )->draw_map( 0, 0 );
 
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 5 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 5 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -121,7 +127,7 @@ all gear is special, and all gear is unique.
   <h2>(<a href="game-setting.php?state=tutorial&amp;status=5">Alright,
 I think I'm picking up what you're putting down.</a>)</h2>
 <?php
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 6 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 6 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -141,7 +147,7 @@ replenishes more quickly with better hoodies.</b></p>
   <h2>(<a href="game-setting.php?state=tutorial&amp;status=6">Okay, I've
 got it! Let me at 'em.</a>)</h2>
 <?php
-        } else if ( ! $ag->c( 'common' )->get_bit( $t, 7 ) ) {
+            } else if ( ! $this->ag->c( 'common' )->get_bit( $t, 7 ) ) {
 ?>
 <div class="row text-right">
   <h1 class="page_section">Tutorial</h1>
@@ -151,38 +157,33 @@ got it! Let me at 'em.</a>)</h2>
   <p class="lead">Best of luck out there, adventurer!</p>
   <h2>(<a href="?state=profile">Take me to my character page!</a>)</h2>
 <?php
-            $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-                AG_TUTORIAL,
-                $ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
-        } else {
-            /* This is bad!  Clear the tutorial to be safe. */
-            //$ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-            //    AG_TUTORIAL,
-            //    $ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
+                $this->ag->c( 'user' )->update_character_meta( $this->ag->char[ 'id' ], ag_meta_type_character,
+                    AG_TUTORIAL,
+                    $this->ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
+            } else {
+                /* This is bad!  Clear the tutorial to be safe. */
+                //$this->ag->c( 'user' )->update_character_meta( $this->ag->char[ 'id' ], ag_meta_type_character,
+                //    AG_TUTORIAL,
+                //    $this->ag->c( 'common' )->set_bit( $t, TUTORIAL_BIT_COMPLETE ) ) ;
+            }
         }
     }
-}
 
-$ag->add_state( 'do_page_content', FALSE, 'ag_tutorial_print' );
+    public function tutorial_setting( $args ) {
+        if ( ! isset( $args[ 'status' ] ) ) {
+            return;
+        }
 
+        $bit = intval( $args[ 'status' ] );
+        if ( ( $bit < 0 ) || ( $bit > 15 ) ) {
+            return;
+        }
 
-function ag_tutorial_setting( $args ) {
-    if ( ! isset( $args[ 'status' ] ) ) {
-        return;
+        $t = $this->ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
+        $this->ag->c( 'user' )->ensure_character_meta( $this->ag->char[ 'id' ], ag_meta_type_character,
+            AG_TUTORIAL );
+        $this->ag->c( 'user' )->update_character_meta( $this->ag->char[ 'id' ], ag_meta_type_character,
+            AG_TUTORIAL, $this->ag->c( 'common' )->set_bit( $t, $bit ) );
     }
 
-    $bit = intval( $args[ 'status' ] );
-    if ( ( $bit < 0 ) || ( $bit > 15 ) ) {
-        return;
-    }
-
-    global $ag;
-
-    $t = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_TUTORIAL );
-    $ag->c( 'user' )->ensure_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_TUTORIAL );
-    $ag->c( 'user' )->update_character_meta( $ag->char[ 'id' ], ag_meta_type_character,
-        AG_TUTORIAL, $ag->c( 'common' )->set_bit( $t, $bit ) );
 }
-
-$ag->add_state( 'do_setting', 'tutorial', 'ag_tutorial_setting' );

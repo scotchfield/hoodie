@@ -1,15 +1,24 @@
 <?php
 
-global $ag;
-
 define( 'AG_VENDOR_GEAR_MAX', 3 );
 
-function ag_vendor_content() {
-    global $ag;
+class HQVendor {
 
-    if ( strcmp( 'vendor', $ag->get_state() ) ) {
-       return;
+    public $ag;
+
+    public function __construct( $ag ) {
+        $ag->add_state( 'do_page_content', FALSE,
+            array( $this, 'vendor_content' ) );
+        $ag->add_state( 'do_setting', 'vendor_buy',
+            array( $this, 'vendor_buy' ) );
+
+        $this->ag = $ag;
     }
+
+    public function vendor_content() {
+        if ( strcmp( 'vendor', $this->ag->get_state() ) ) {
+           return;
+        }
 ?>
 
 <div class="row text-right">
@@ -17,10 +26,10 @@ function ag_vendor_content() {
 </div>
 
 <?php
-    $obj = ag_get_map_state( $ag->char[ 'x' ], $ag->char[ 'y' ] );
+        $obj = $this->ag->c( 'hq_map' )->get_map_state( $this->ag->char[ 'x' ], $this->ag->char[ 'y' ] );
 
-    $vendor_gear = ag_get_vendor_gear( $ag->char[ 'x' ], $ag->char[ 'y' ],
-        $obj[ 'level' ] );
+        $vendor_gear = $this->get_vendor_gear( $this->ag->char[ 'x' ], $this->ag->char[ 'y' ],
+            $obj[ 'level' ] );
 
 ?>
 <div class="row text-center">
@@ -29,91 +38,82 @@ function ag_vendor_content() {
 
 <?php
 
-    $ag->hq->xy_seed( $ag->char[ 'x' ], $ag->char[ 'y' ] );
+        $this->ag->hq->xy_seed( $this->ag->char[ 'x' ], $this->ag->char[ 'y' ] );
 
-    $gear_i = 0;
-    foreach ( $vendor_gear as $gear ) {
-        echo( '<div class="row text-center">' );
-        echo( '<h4>Gear #' . ( $gear_i + 1 ) . ': ' . $ag->hq->gear_string( $gear ) .
-              '<br>(<a href="game-setting.php?setting=vendor_buy&id=' .
-              $gear_i . '">Purchase for ' .
-              $obj[ 'level' ] * 1000 .
-              ' gold?</a>)</h4>' );
-        echo( '</div>' );
+        $gear_i = 0;
+        foreach ( $vendor_gear as $gear ) {
+            echo( '<div class="row text-center">' );
+            echo( '<h4>Gear #' . ( $gear_i + 1 ) . ': ' . $this->ag->hq->gear_string( $gear ) .
+                  '<br>(<a href="game-setting.php?setting=vendor_buy&id=' .
+                  $gear_i . '">Purchase for ' .
+                  $obj[ 'level' ] * 1000 .
+                  ' gold?</a>)</h4>' );
+            echo( '</div>' );
 
-        $gear_i += 1;
+            $gear_i += 1;
+        }
+
+    }
+
+    public function get_vendor_gear( $x, $y, $level ) {
+        mt_srand( $x );
+        mt_srand( mt_rand() + $y );
+
+        $gear = array();
+
+        for ( $i = 0; $i < AG_VENDOR_GEAR_MAX; $i++ ) {
+            $gear[] = $this->ag->hq->get_gear( $this->ag->hq->get_gear_slot(), $level + 3 );
+        }
+
+        mt_srand();
+
+        return $gear;
+    }
+
+    public function vendor_buy( $args ) {
+        $this->ag->set_redirect_header( GAME_URL . '?state=vendor' );
+
+        if ( ! isset( $args[ 'id' ] ) ) {
+            return;
+        }
+
+        $id = intval( $args[ 'id' ] );
+
+        if ( $id < 0 || $id >= AG_VENDOR_GEAR_MAX ) {
+            return;
+        }
+
+        $x = $this->ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_X );
+        $y = $this->ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_Y );
+
+        $obj = $this->ag->c( 'hq_map' )->get_map_state( $x, $y );
+
+        $vendor_gear = $this->get_vendor_gear( $x, $y, $obj[ 'level' ] );
+
+        $gold = $this->ag->c( 'user' )->character_meta_int(
+            ag_meta_type_character, AG_GOLD );
+        $cost = intval( $obj[ 'level' ] ) * 1000;
+
+        if ( $gold < $cost ) {
+            $this->ag->hq->tip( 'You don\'t have enough gold!' );
+
+            return;
+        }
+
+        $new_gold = $gold - $cost;
+        $this->ag->c( 'user' )->update_character_meta(
+            $this->ag->char[ 'id' ], ag_meta_type_character, AG_GOLD, $new_gold );
+
+        $gear = $vendor_gear[ $id ];
+
+        $this->ag->c( 'user' )->update_character_meta(
+            $this->ag->char[ 'id' ], ag_meta_type_character,
+            $gear[ 'slot' ], json_encode( $gear, $assoc = TRUE ) );
+
+        $this->ag->set_redirect_header( GAME_URL . '?state=character' );
+
+        $this->ag->hq->tip( 'You purchase the ' . $this->ag->hq->gear_string( $gear ) . ' for ' .
+                $cost . ' gold.' );
     }
 
 }
-
-$ag->add_state( 'do_page_content', FALSE, 'ag_vendor_content' );
-
-
-
-function ag_get_vendor_gear( $x, $y, $level ) {
-    global $ag;
-
-    mt_srand( $x );
-    mt_srand( mt_rand() + $y );
-
-    $gear = array();
-
-    for ( $i = 0; $i < AG_VENDOR_GEAR_MAX; $i++ ) {
-        $gear[] = $ag->hq->get_gear( $ag->hq->get_gear_slot(), $level + 3 );
-    }
-
-    mt_srand();
-
-    return $gear;
-}
-
-
-function ag_vendor_buy( $args ) {
-    global $ag;
-
-    $ag->set_redirect_header( GAME_URL . '?state=vendor' );
-
-    if ( ! isset( $args[ 'id' ] ) ) {
-        return;
-    }
-
-    $id = intval( $args[ 'id' ] );
-
-    if ( $id < 0 || $id >= AG_VENDOR_GEAR_MAX ) {
-        return;
-    }
-
-    $x = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_X );
-    $y = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_POS_Y );
-
-    $obj = ag_get_map_state( $x, $y );
-
-    $vendor_gear = ag_get_vendor_gear( $x, $y, $obj[ 'level' ] );
-
-    $gold = $ag->c( 'user' )->character_meta_int(
-        ag_meta_type_character, AG_GOLD );
-    $cost = intval( $obj[ 'level' ] ) * 1000;
-
-    if ( $gold < $cost ) {
-        $ag->hq->tip( 'You don\'t have enough gold!' );
-
-        return;
-    }
-
-    $new_gold = $gold - $cost;
-    $ag->c( 'user' )->update_character_meta(
-        $ag->char[ 'id' ], ag_meta_type_character, AG_GOLD, $new_gold );
-
-    $gear = $vendor_gear[ $id ];
-
-    $ag->c( 'user' )->update_character_meta(
-        $ag->char[ 'id' ], ag_meta_type_character,
-        $gear[ 'slot' ], json_encode( $gear, $assoc = TRUE ) );
-
-    $ag->set_redirect_header( GAME_URL . '?state=character' );
-
-    $ag->hq->tip( 'You purchase the ' . $ag->hq->gear_string( $gear ) . ' for ' .
-            $cost . ' gold.' );
-}
-
-$ag->add_state( 'do_setting', 'vendor_buy', 'ag_vendor_buy' );
