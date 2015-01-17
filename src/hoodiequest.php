@@ -41,22 +41,32 @@ class Hoodiequest {
     public $ag;
 
     public function __construct( $ag ) {
-        $ag->add_state( 'set_default_state', FALSE, array( $this, 'default_state' ) );
+        $ag->add_state( 'set_default_state', FALSE,
+            array( $this, 'default_state' ) );
         $ag->add_state( 'select_character', FALSE, array( $this, 'login' ) );
         $ag->add_state( 'game_header', FALSE, array( $this, 'header' ) );
         $ag->add_state( 'game_footer', FALSE, array( $this, 'footer' ) );
         $ag->add_state( 'do_page_content', FALSE, array( $this, 'about' ) );
         $ag->add_state( 'do_page_content', FALSE, array( $this, 'upgrade' ) );
-        $ag->add_state( 'character_load', FALSE, array( $this, 'unpack_character' ) );
-        $ag->add_state( 'character_load', FALSE, array( $this, 'regen_stamina' ) );
-        $ag->add_state_priority( 'do_page_content', FALSE, array( $this, 'tip_print' ) );
-        $ag->add_state( 'validate_user', FALSE, array( $this, 'validate_user' ) );
-        $ag->add_state( 'award_achievement', FALSE, array( $this, 'achievement_print' ) );
-        $ag->add_state( 'do_page_content', FALSE, array( $this, 'thank_you' ) );
-        $ag->add_state( 'do_page_content', FALSE, array( $this, 'online' ) );
+        $ag->add_state( 'character_load', FALSE,
+            array( $this, 'unpack_character' ) );
+        $ag->add_state( 'character_load', FALSE,
+            array( $this, 'regen_stamina' ) );
+        $ag->add_state_priority( 'do_page_content', FALSE,
+            array( $this, 'tip_print' ) );
+        $ag->add_state( 'validate_user', FALSE,
+            array( $this, 'validate_user' ) );
+        $ag->add_state( 'award_achievement', FALSE,
+            array( $this, 'achievement_print' ) );
+        $ag->add_state( 'do_page_content', FALSE,
+            array( $this, 'thank_you' ) );
+        $ag->add_state( 'do_page_content', FALSE,
+            array( $this, 'online' ) );
 
         $ag->set_component( 'achievement', new ArcadiaAchievement() );
         $ag->set_component( 'heartbeat', new ArcadiaHeartbeat() );
+
+        $ag->set_component( 'hq_character', new HQCharacter( $ag ) );
 
         $this->ag = $ag;
     }
