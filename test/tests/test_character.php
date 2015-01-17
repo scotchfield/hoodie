@@ -11,14 +11,19 @@ class TestCharacter extends PHPUnit_Framework_TestCase {
         $ag->set_component( 'user', new ArcadiaUser( $ag ) );
 
         $this->ag = $ag;
+        $this->hq = new Hoodiequest( $ag );
     }
 
     public function tearDown() {
+        unset( $this->hq );
         unset( $this->ag );
     }
 
-    public function test_tautology() {
-        $this->assertTrue( true );
+    /**
+     * @covers HQCharacter::__construct
+     */
+    public function test_character_new() {
+        $this->assertNotFalse( $this->ag->c( 'hq_character' ) );
     }
 
 }
