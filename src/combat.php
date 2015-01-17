@@ -48,7 +48,7 @@ then try to engage in combat once more.</p>
         }
 
         if ( FALSE == $map_obj ) {
-            $map_obj = ag_get_map_state( $this->ag->char[ 'x' ], $this->ag->char[ 'y' ] );
+            $map_obj = $this->ag->c( 'hq_map' )->get_map_state( $this->ag->char[ 'x' ], $this->ag->char[ 'y' ] );
         }
 
         if ( FALSE == $foe ) {
@@ -263,22 +263,22 @@ then try to engage in combat once more.</p>
         $foe = array();
 
         if ( 1 == $id ) {
-            $map = ag_get_map_state( 5, 5 );
+            $map = $this->ag->c( 'hq_map' )->get_map_state( 5, 5 );
             $foe = $this->boss(
                 1, 'Chester, he who is Mediocre', mt_rand( 20, 30 ),
                 mt_rand( 60, 120 ), mt_rand( 4, 6 ) );
         } else if ( 2 == $id ) {
-            $map = ag_get_map_state( 10, 10 );
+            $map = $this->ag->c( 'hq_map' )->get_map_state( 10, 10 );
             $foe = $this->boss(
                 2, 'Thunderface', round( pow( mt_rand( 20, 22 ), 1.5 ) ),
                 mt_rand( 120, 200 ), mt_rand( 10, 12 ) );
         } else if ( 3 == $id ) {
-            $map = ag_get_map_state( 15, 15 );
+            $map = $this->ag->c( 'hq_map' )->get_map_state( 15, 15 );
             $foe = $this->boss(
                 3, 'Doctor Blob', round( pow( mt_rand( 35, 39 ), 1.5 ) ),
                 mt_rand( 500, 700 ), mt_rand( 16, 19 ) );
         } else {
-            $map = ag_get_map_state( 0, 0 );
+            $map = $this->ag->c( 'hq_map' )->get_map_state( 0, 0 );
             $foe = $this->boss(
                 -1, 'Piotr the Hax0red', mt_rand( 200000, 300000 ), 1,
                 mt_rand( 200000, 300000 ) );
