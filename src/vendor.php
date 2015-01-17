@@ -29,12 +29,12 @@ function ag_vendor_content() {
 
 <?php
 
-    ag_xy_seed( $ag->char[ 'x' ], $ag->char[ 'y' ] );
+    $ag->hq->xy_seed( $ag->char[ 'x' ], $ag->char[ 'y' ] );
 
     $gear_i = 0;
     foreach ( $vendor_gear as $gear ) {
         echo( '<div class="row text-center">' );
-        echo( '<h4>Gear #' . ( $gear_i + 1 ) . ': ' . ag_gear_string( $gear ) .
+        echo( '<h4>Gear #' . ( $gear_i + 1 ) . ': ' . $ag->hq->gear_string( $gear ) .
               '<br>(<a href="game-setting.php?setting=vendor_buy&id=' .
               $gear_i . '">Purchase for ' .
               $obj[ 'level' ] * 1000 .
@@ -51,13 +51,15 @@ $ag->add_state( 'do_page_content', FALSE, 'ag_vendor_content' );
 
 
 function ag_get_vendor_gear( $x, $y, $level ) {
+    global $ag;
+
     mt_srand( $x );
     mt_srand( mt_rand() + $y );
 
     $gear = array();
 
     for ( $i = 0; $i < AG_VENDOR_GEAR_MAX; $i++ ) {
-        $gear[] = ag_get_gear( ag_get_gear_slot(), $level + 3 );
+        $gear[] = $ag->hq->get_gear( $ag->hq->get_gear_slot(), $level + 3 );
     }
 
     mt_srand();
@@ -93,7 +95,7 @@ function ag_vendor_buy( $args ) {
     $cost = intval( $obj[ 'level' ] ) * 1000;
 
     if ( $gold < $cost ) {
-        ag_tip( 'You don\'t have enough gold!' );
+        $ag->hq->tip( 'You don\'t have enough gold!' );
 
         return;
     }
@@ -110,7 +112,7 @@ function ag_vendor_buy( $args ) {
 
     $ag->set_redirect_header( GAME_URL . '?state=character' );
 
-    ag_tip( 'You purchase the ' . ag_gear_string( $gear ) . ' for ' .
+    $ag->hq->tip( 'You purchase the ' . $ag->hq->gear_string( $gear ) . ' for ' .
             $cost . ' gold.' );
 }
 

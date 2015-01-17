@@ -83,6 +83,8 @@ $ag->add_state( 'do_page_content', FALSE, 'ag_char_content' );
 
 
 function ag_print_character( $character ) {
+    global $ag;
+
 ?>
 <div class="row">
   <div class="col-md-6">
@@ -137,7 +139,7 @@ function ag_print_character( $character ) {
         if ( isset( $character[ $v ] ) ) {
             $gear = $character[ $v ];
         }
-        echo( '      <dd>' . ag_gear_string( $gear ) . "</dd>\n" );
+        echo( '      <dd>' . $ag->hq->gear_string( $gear ) . "</dd>\n" );
     }
 ?>
     </dl>

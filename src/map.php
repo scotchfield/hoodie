@@ -95,7 +95,7 @@ function ag_map_move() {
     $ag->set_redirect_header( GAME_URL . '?state=map' );
 
     if ( ! $ag->get_arg( 'x' ) || ! $ag->get_arg( 'y' ) ) {
-        ag_tip( 'Missing x or y values.' );
+        $ag->hq->tip( 'Missing x or y values.' );
         return;
     }
 

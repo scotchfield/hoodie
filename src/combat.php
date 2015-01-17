@@ -27,7 +27,7 @@ function ag_combat_content() {
 function ag_do_combat( $map_obj = FALSE, $foe = FALSE ) {
     global $ag;
 
-    $gear_obj = ag_get_gear_obj();
+    $gear_obj = $ag->hq->get_gear_obj();
 
     $stamina = $ag->c( 'user' )->character_meta_float( ag_meta_type_character, AG_STAMINA );
 
@@ -51,7 +51,7 @@ then try to engage in combat once more.</p>
     }
 
     echo( '<div class="row"><h2>' .
-          ag_st( 'Your foe: ' . $foe[ 'name' ] ) .
+          $ag->hq->st( 'Your foe: ' . $foe[ 'name' ] ) .
           '</h2></div>' );
 
     $combat = TRUE;
@@ -159,11 +159,11 @@ then try to engage in combat once more.</p>
             );
 
             $gear_slot = $gear_drop[ array_rand( $gear_drop ) ];
-            $gear = ag_get_gear( $gear_slot, $foe[ 'ability' ] );
+            $gear = $ag->hq->get_gear( $gear_slot, $foe[ 'ability' ] );
 
-            echo( '<h3>Available Gear: ' . ag_gear_string( $gear ) . '</h3>' );
+            echo( '<h3>Available Gear: ' . $ag->hq->gear_string( $gear ) . '</h3>' );
             echo( '<h3>Currently Equipped: ' .
-                  ag_gear_string( $ag->char[
+                  $ag->hq->gear_string( $ag->char[
                       array_search( $gear_slot, $gear_obj ) ] ) );
             echo( '<h3>(<a href="game-setting.php?state=equip_gear">' .
                   'Click to discard your old gear and take the new gear' .
@@ -321,7 +321,7 @@ function ag_get_attack( $ability, $is_foe ) {
 function ag_equip_gear( $args ) {
     global $ag;
 
-    $gear_obj = ag_get_gear_obj();
+    $gear_obj = $ag->hq->get_gear_obj();
 
     $gear_slot = $ag->c( 'user' )->character_meta( ag_meta_type_character, AG_STORED_SLOT );
 
