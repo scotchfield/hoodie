@@ -1,0 +1,8 @@
+before_script:
+  - cd test
+  - git clone https://github.com/scotchfield/arcadia.git
+  - mysql -e 'DROP DATABASE IF EXISTS game_test; CREATE DATABASE game_test; USE game_test; source arcadia/db/arcadia.sql;' -uroot
+language: php
+php:
+  - 5.5
+script: phpunit --configuration phpunit_travis.xml.dist
