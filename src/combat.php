@@ -16,6 +16,10 @@ class HQCombat {
     }
 
     public function combat_content() {
+        if ( FALSE === $this->ag->char ) {
+            return FALSE;
+        }
+
 ?>
 <div class="row text-right">
   <h1 class="page_section">Combat</h1>
@@ -29,6 +33,7 @@ class HQCombat {
   <h2>(<a href="?state=combat">Click to battle a new foe</a>)</h2>
 </div>
 <?php
+        return TRUE;
     }
 
     public function do_combat( $map_obj = FALSE, $foe = FALSE ) {
