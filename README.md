@@ -1,6 +1,8 @@
 hoodie
 ======
 
+[![Build status](https://api.travis-ci.org/scotchfield/hoodie.svg?branch=master)](https://travis-ci.org/scotchfield/hoodie)
+
 http://hoodiequest.com
 
 Hoodiequest, an [Arcadia](https://github.com/scotchfield/arcadia) game.
