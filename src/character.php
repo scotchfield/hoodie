@@ -43,7 +43,7 @@ class HQCharacter {
             $this->ag->c( 'achievement' )->award_achievement( 106 );
         }
 
-        $this->print_character( $this->ag->char );
+        $result = $this->print_character( $this->ag->char );
 ?>
 </div>
 <div class="row text-center">
@@ -52,7 +52,7 @@ class HQCharacter {
 </div>
 <?php
 
-        return TRUE;
+        return $result;
     }
 
     public function char_content() {
@@ -84,6 +84,17 @@ class HQCharacter {
     }
 
     public function print_character( $character ) {
+        $key_obj = array(
+            'character_name', 'health', 'stamina', 'stamina_max', 'gold',
+            'xp', 'x', 'y', 'wins', 'losses',
+            'max_damage_done', 'max_damage_taken'
+        );
+
+        foreach ( $key_obj as $key ) {
+            if ( ! isset( $character[ $key ] ) ) {
+                return FALSE;
+            }
+        }
 ?>
 <div class="row">
   <div class="col-md-6">

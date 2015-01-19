@@ -25,6 +25,22 @@ class TestCharacter extends PHPUnit_Framework_TestCase {
         unset( $this->ag );
     }
 
+    private function get_character() {
+        $character = array();
+
+        $key_obj = array(
+            'character_name', 'health', 'stamina', 'stamina_max', 'gold',
+            'xp', 'x', 'y', 'wins', 'losses', 'max_damage_done',
+            'max_damage_taken', 'ability', 'id',
+        );
+
+        foreach ( $key_obj as $key ) {
+            $character[ $key ] = 'test';
+        }
+
+        return $character;
+    }
+
     /**
      * @covers HQCharacter::__construct
      */
@@ -36,12 +52,47 @@ class TestCharacter extends PHPUnit_Framework_TestCase {
      * @covers HQCharacter::profile_content
      * @covers HQCharacter::print_character
      */
-    public function test_character_profile_content() {
+    public function test_character_profile_content_no_char() {
         $component = new HQCharacter( $this->ag );
 
         ob_start();
         $result = $component->profile_content();
         ob_end_clean();
+
+        $this->assertFalse( $result );
+    }
+
+    /**
+     * @covers HQCharacter::profile_content
+     * @covers HQCharacter::print_character
+     */
+    public function test_character_profile_content() {
+        $component = new HQCharacter( $this->ag );
+
+        $this->ag->char = $this->get_character();
+
+        ob_start();
+        $result = $component->profile_content();
+        ob_end_clean();
+
+        $this->assertTrue( $result );
+    }
+
+    /**
+     * @covers HQCharacter::profile_content
+     * @covers HQCharacter::print_character
+     */
+    public function test_character_profile_content_award_achievements() {
+        $component = new HQCharacter( $this->ag );
+
+        $this->ag->char = $this->get_character();
+        $this->ag->char[ 'ability' ] = 1000;
+
+        ob_start();
+        $result = $component->profile_content();
+        ob_end_clean();
+
+        // todo: check all achievements are awarded
 
         $this->assertTrue( $result );
     }
