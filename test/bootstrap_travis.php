@@ -12,7 +12,7 @@ define( 'DB_NAME', 'game_test' );
 define( 'DB_USER', 'root' );
 define( 'DB_PASSWORD', '' );
 
-define( 'GAME_CUSTOM_PATH', '../' );
+define( 'GAME_CUSTOM_PATH', '../src/' );
 define( 'GAME_CUSTOM_STYLE_URL',
         'http://localhost:8888/game/hoodie/style/' );
 
