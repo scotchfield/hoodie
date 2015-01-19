@@ -5,18 +5,17 @@ class HQCharacter {
     public $ag;
 
     public function __construct( $ag ) {
-        $ag->add_state( 'do_page_content', FALSE, array( $this, 'profile_content' ) );
-        $ag->add_state( 'do_page_content', FALSE, array( $this, 'char_content' ) );
-        $ag->add_state( 'do_page_content', FALSE, array( $this, 'achievements_content' ) );
+        $ag->add_state( 'do_page_content', 'profile',
+            array( $this, 'profile_content' ) );
+        $ag->add_state( 'do_page_content', 'char',
+            array( $this, 'char_content' ) );
+        $ag->add_state( 'do_page_content', 'achievements',
+            array( $this, 'achievements_content' ) );
 
         $this->ag = $ag;
     }
 
     public function profile_content() {
-        if ( strcmp( 'profile', $this->ag->get_state() ) ) {
-           return;
-        }
-
 ?>
 <div class="row text-right">
   <h1 class="page_section">Profile</h1>
@@ -52,35 +51,36 @@ class HQCharacter {
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 <?php
+
+        return TRUE;
     }
 
     public function char_content() {
-        if ( strcmp( 'char', $this->ag->get_state() ) ) {
-           return;
-        }
-
 ?>
 <div class="row text-right">
   <h1 class="page_section">Profile</h1>
 </div>
 <?php
 
-        if ( ! isset( $_GET[ 'id' ] ) ) {
-            return;
+        if ( FALSE === $this->ag->get_arg( 'id' ) ) {
+            return FALSE;
         }
 
-        $char_id = intval( $_GET[ 'id' ] );
+        $char_id = intval( $this->ag->get_arg( 'id' ) );
         $char = $this->ag->c( 'user' )->get_character_by_id( $char_id );
 
         if ( FALSE == $char ) {
-            return;
+            return FALSE;
         }
 
-        $char[ 'meta' ] = $this->ag->c( 'user' )->get_character_meta( $char_id );
+        $char[ 'meta' ] = $this->ag->c( 'user' )->get_character_meta(
+            $char_id );
 
         $char = $this->ag->hq->get_unpacked_character( $char );
 
         $this->print_character( $char );
+
+        return TRUE;
     }
 
     public function print_character( $character ) {
@@ -138,32 +138,31 @@ class HQCharacter {
             if ( isset( $character[ $v ] ) ) {
                 $gear = $character[ $v ];
             }
-            echo( '      <dd>' . $this->ag->hq->gear_string( $gear ) . "</dd>\n" );
+            echo( '      <dd>' . $this->ag->hq->gear_string( $gear ) .
+                  "</dd>\n" );
         }
 ?>
     </dl>
-
   </div>
   <div class="col-md-6">
-
     <h2>Stats</h2>
-
     <dl class="dl-horizontal">
 <?php
-        $stat_keys = array_keys( $character[ 'stats' ] );
-        usort( $stat_keys, array( $this, 'sort_stats_cmp' ) );
+        if ( isset( $character[ 'stats' ] ) ) {
+            $stat_keys = array_keys( $character[ 'stats' ] );
+            usort( $stat_keys, array( $this, 'sort_stats_cmp' ) );
 
-        foreach ( $stat_keys as $k ) {
-            echo( "      <dt>$k</dt>\n" );
-            echo( '      <dd>' . $character[ 'stats' ][ $k ] . "</dd>\n" );
+            foreach ( $stat_keys as $k ) {
+                echo( "      <dt>$k</dt>\n" );
+                echo( '      <dd>' . $character[ 'stats' ][ $k ] . "</dd>\n" );
+            }
         }
 ?>
     </dl>
-
   </div>
-
 </div>
 <?php
+        return TRUE;
     }
 
     public function sort_stats_cmp( $a, $b ) {
@@ -176,10 +175,6 @@ class HQCharacter {
     }
 
     public function achievements_content() {
-        if ( strcmp( 'achievements', $this->ag->get_state() ) ) {
-           return;
-        }
-
 ?>
 <div class="row text-right">
   <h1 class="page_section">Achievements</h1>
@@ -189,10 +184,9 @@ class HQCharacter {
     <h3>Your achievements</h3>
 <?php
         if ( ( ! isset( $this->ag->char[ 'meta' ][
-                            $this->ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ||
-             ( 0 == count(
-                        $this->ag->char[ 'meta' ][
-                            $this->ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ) {
+                 $this->ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ||
+             ( 0 == count( $this->ag->char[ 'meta' ][
+                 $this->ag->c( 'achievement' )->get_flag_game_meta() ] ) ) ) {
             echo( '<h4>None yet!</h4>' );
         } else {
             echo( '<dl class="dl-horizontal">' );
@@ -218,8 +212,8 @@ class HQCharacter {
 
         foreach ( $achieve_obj as $k => $achieve ) {
             if ( isset( $this->ag->char[ 'meta' ][
-                            $this->ag->c( 'achievement' )->get_flag_game_meta() ][
-                            $k ] ) ) {
+                    $this->ag->c( 'achievement' )->get_flag_game_meta() ][
+                        $k ] ) ) {
                 continue;
             }
             $meta = json_decode( $achieve[ 'meta_value' ], TRUE );
@@ -231,6 +225,7 @@ class HQCharacter {
   </div>
 </div>
 <?php
+        return TRUE;
     }
 
 }

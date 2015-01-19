@@ -186,12 +186,14 @@ class Hoodiequest {
         $char[ 'ability' ] = 0.0;
 
         foreach ( $gear_obj as $k => $v ) {
-            if ( ! isset( $char[ 'meta' ][ ag_meta_type_character ] ) ) {
+            if ( ! isset( $char[ 'meta' ][ ag_meta_type_character ][ $v ] ) ) {
                 continue;
             }
 
-            $obj = json_decode( $char[ 'meta' ][ ag_meta_type_character ][ $v ],
+            $obj = json_decode(
+                $char[ 'meta' ][ ag_meta_type_character ][ $v ],
                 $assoc = TRUE );
+
             $char[ $k ] = $obj;
 
             if ( ! isset( $obj[ 'stats' ] ) ) {
